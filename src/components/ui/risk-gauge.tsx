@@ -1,5 +1,6 @@
 import React from 'react';
 import { cn } from '@/lib/utils';
+import { AlertTriangle } from 'lucide-react';
 
 interface RiskGaugeProps {
   score: number; // 0-100
@@ -15,15 +16,27 @@ export const RiskGauge: React.FC<RiskGaugeProps> = ({ score, className }) => {
   
   // Determine risk level and color
   const getRiskLevel = (score: number) => {
-    if (score <= 30) return { level: 'Low Risk', color: '#4CAF50', emoji: '✅' };
-    if (score <= 70) return { level: 'Medium Risk', color: '#FFC107', emoji: '⚠️' };
-    return { level: 'High Risk', color: '#F44336', emoji: '⚠️' };
+    if (score <= 30) return { 
+      level: 'Low Risk', 
+      color: 'hsl(122 39% 49%)', // #2E7D32 equivalent in HSL
+      showIcon: false
+    };
+    if (score <= 70) return { 
+      level: 'Medium Risk', 
+      color: 'hsl(45 93% 47%)', // #F9A825 equivalent in HSL
+      showIcon: true
+    };
+    return { 
+      level: 'High Risk', 
+      color: 'hsl(4 90% 58%)', // #D32F2F equivalent in HSL
+      showIcon: true
+    };
   };
   
   const risk = getRiskLevel(clampedScore);
   
   return (
-    <div className={cn("flex flex-col items-center space-y-4", className)}>
+    <div className={cn("flex flex-col items-center justify-center space-y-4 min-h-[280px]", className)}>
       {/* Gauge Container */}
       <div className="relative w-48 h-24">
         {/* Background Arc */}
@@ -32,7 +45,7 @@ export const RiskGauge: React.FC<RiskGaugeProps> = ({ score, className }) => {
           <path
             d="M 20 80 A 80 80 0 0 1 80 20"
             fill="none"
-            stroke="#4CAF50"
+            stroke="hsl(122 39% 49%)"
             strokeWidth="12"
             strokeLinecap="round"
             opacity="0.3"
@@ -41,7 +54,7 @@ export const RiskGauge: React.FC<RiskGaugeProps> = ({ score, className }) => {
           <path
             d="M 80 20 A 80 80 0 0 1 120 20"
             fill="none"
-            stroke="#FFC107"
+            stroke="hsl(45 93% 47%)"
             strokeWidth="12"
             strokeLinecap="round"
             opacity="0.3"
@@ -50,7 +63,7 @@ export const RiskGauge: React.FC<RiskGaugeProps> = ({ score, className }) => {
           <path
             d="M 120 20 A 80 80 0 0 1 180 80"
             fill="none"
-            stroke="#F44336"
+            stroke="hsl(4 90% 58%)"
             strokeWidth="12"
             strokeLinecap="round"
             opacity="0.3"
@@ -71,9 +84,9 @@ export const RiskGauge: React.FC<RiskGaugeProps> = ({ score, className }) => {
           {/* Gradient Definition */}
           <defs>
             <linearGradient id="gaugeGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stopColor="#4CAF50" />
-              <stop offset="50%" stopColor="#FFC107" />
-              <stop offset="100%" stopColor="#F44336" />
+              <stop offset="0%" stopColor="hsl(122 39% 49%)" />
+              <stop offset="50%" stopColor="hsl(45 93% 47%)" />
+              <stop offset="100%" stopColor="hsl(4 90% 58%)" />
             </linearGradient>
           </defs>
           
@@ -107,7 +120,7 @@ export const RiskGauge: React.FC<RiskGaugeProps> = ({ score, className }) => {
           style={{ color: risk.color }}
         >
           <span>{risk.level}</span>
-          <span>{risk.emoji}</span>
+          {risk.showIcon && <AlertTriangle className="w-5 h-5" />}
         </div>
       </div>
     </div>

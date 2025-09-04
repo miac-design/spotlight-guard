@@ -224,83 +224,91 @@ const ReportConcern = () => {
 
                 {/* AI Analysis Results */}
                 {showSimulation && (
-                  <div className="bg-neutral-light/50 backdrop-blur-sm p-8 rounded-lg border border-teal-primary/20 animate-in fade-in duration-1000 space-y-6">
-                    {/* Header */}
-                    <div className="flex items-center gap-3 mb-6">
-                      <div className="w-8 h-8 bg-teal-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
-                        <Eye className="h-4 w-4 text-teal-primary" />
-                      </div>
-                      <h4 className="font-semibold text-teal-primary text-lg">AI Analysis Complete</h4>
+                  <div className="space-y-6 animate-in fade-in duration-1000">
+                    {/* Page Subheader */}
+                    <div className="text-left mb-8">
+                      <h3 className="text-2xl font-bold text-text-primary mb-2">AI Analysis Results</h3>
+                      <p className="text-text-secondary">These insights are for education. Always use your judgment.</p>
                     </div>
 
-                    {/* Risk Gauge */}
-                    <div className="bg-white/50 p-6 rounded-lg">
-                      <RiskGauge score={80} />
-                    </div>
+                    {/* Card A: Risk Score */}
+                    <Card className="bg-white shadow-card rounded-2xl border-0">
+                      <CardContent className="p-6 md:p-8">
+                        <div className="flex items-center gap-3 mb-6">
+                          <Search className="h-5 w-5 text-teal-primary" aria-label="Risk score gauge" />
+                          <h4 className="text-xl font-bold text-text-primary">Risk Score</h4>
+                        </div>
+                        <RiskGauge score={80} />
+                      </CardContent>
+                    </Card>
 
-                    {/* Analysis Results */}
-                    <div className="space-y-6">
-                      {/* Red Flags */}
-                      <div className="space-y-3">
-                        <h5 className="font-semibold text-text-primary flex items-center gap-2">
-                          <AlertCircle className="h-4 w-4 text-red-500" />
-                          Red Flags Detected:
-                        </h5>
-                        <div className="space-y-2 text-sm text-text-primary ml-6">
-                          <div className="flex items-start gap-2">
-                            <span className="text-red-500">•</span>
-                            <span>Window covered, little light</span>
+                    {/* Card B: Red Flags Detected */}
+                    <Card className="bg-white shadow-card rounded-2xl border-0">
+                      <CardContent className="p-6 md:p-8">
+                        <div className="flex items-center gap-3 mb-6">
+                          <AlertTriangle className="h-5 w-5 text-teal-primary" />
+                          <h4 className="text-xl font-bold text-text-primary">Red Flags Detected</h4>
+                        </div>
+                        <div className="space-y-3">
+                          <div className="flex items-start gap-3">
+                            <div className="w-2 h-2 bg-text-secondary rounded-full mt-2 flex-shrink-0"></div>
+                            <span className="text-text-secondary">Window covered; very little light</span>
                           </div>
-                          <div className="flex items-start gap-2">
-                            <span className="text-red-500">•</span>
-                            <span>Overnight work mentioned</span>
+                          <div className="flex items-start gap-3">
+                            <div className="w-2 h-2 bg-text-secondary rounded-full mt-2 flex-shrink-0"></div>
+                            <span className="text-text-secondary">Overnight work mentioned</span>
                           </div>
-                          <div className="flex items-start gap-2">
-                            <span className="text-red-500">•</span>
-                            <span>Secrecy language: "Don't tell anyone"</span>
+                          <div className="flex items-start gap-3">
+                            <div className="w-2 h-2 bg-text-secondary rounded-full mt-2 flex-shrink-0"></div>
+                            <span className="text-text-secondary">Secrecy language: "Don't tell anyone"</span>
                           </div>
                         </div>
-                      </div>
+                      </CardContent>
+                    </Card>
 
-                      {/* Explanation */}
-                      <div className="space-y-3">
-                        <h5 className="font-semibold text-text-primary flex items-center gap-2">
-                          <Lightbulb className="h-4 w-4 text-amber-500" />
-                          Explanation:
-                        </h5>
-                        <p className="text-sm text-text-secondary ml-6">
-                          This photo shows multiple signs of unsafe conditions that could indicate human trafficking 
-                          or exploitation. The combination of isolation, control language, and unusual work demands 
-                          raises significant safety concerns.
-                        </p>
-                      </div>
+                    {/* Card C: Explanation & Next Steps */}
+                    <Card className="bg-white shadow-card rounded-2xl border-0">
+                      <CardContent className="p-6 md:p-8">
+                        <div className="flex items-center gap-3 mb-6">
+                          <Lightbulb className="h-5 w-5 text-teal-primary" />
+                          <h4 className="text-xl font-bold text-text-primary">Explanation & Next Steps</h4>
+                        </div>
+                        
+                        <div className="space-y-6">
+                          {/* Explanation */}
+                          <div>
+                            <h5 className="font-semibold text-text-primary mb-3">Explanation</h5>
+                            <p className="text-text-secondary leading-relaxed">
+                              This photo shows multiple signs of unsafe conditions that could indicate human trafficking 
+                              or exploitation. The combination of isolation, control language, and unusual work demands 
+                              raises significant safety concerns.
+                            </p>
+                          </div>
 
-                      {/* Next Steps */}
-                      <div className="space-y-3">
-                        <h5 className="font-semibold text-text-primary flex items-center gap-2">
-                          <Shield className="h-4 w-4 text-teal-primary" />
-                          Next Steps:
-                        </h5>
-                        <div className="space-y-2 text-sm text-text-secondary ml-6">
-                          <div className="flex items-start gap-2">
-                            <span className="text-teal-primary">•</span>
-                            <span>Trust your instincts</span>
+                          {/* Next Steps */}
+                          <div>
+                            <h5 className="font-semibold text-text-primary mb-3">Next Steps</h5>
+                            <div className="space-y-3">
+                              <div className="flex items-start gap-3">
+                                <div className="w-2 h-2 bg-text-secondary rounded-full mt-2 flex-shrink-0"></div>
+                                <span className="text-text-secondary">Trust your instincts and seek support from trusted sources</span>
+                              </div>
+                              <div className="flex items-start gap-3">
+                                <div className="w-2 h-2 bg-text-secondary rounded-full mt-2 flex-shrink-0"></div>
+                                <span className="text-text-secondary">Consider reporting to authorities or hotlines if safe to do so</span>
+                              </div>
+                            </div>
                           </div>
-                          <div className="flex items-start gap-2">
-                            <span className="text-teal-primary">•</span>
-                            <span>Share with a trusted hotline or counselor</span>
-                          </div>
-                          <div className="flex items-start gap-2">
-                            <span className="text-teal-primary">•</span>
-                            <span>Consider reporting to authorities if safe to do so</span>
+
+                          {/* Privacy Note */}
+                          <div className="pt-4 border-t border-neutral-medium/30">
+                            <p className="text-xs text-muted-foreground">
+                              For learning only. No data is stored or shared.
+                            </p>
                           </div>
                         </div>
-                      </div>
-                    </div>
-
-                    <div className="text-xs text-muted-foreground italic text-center pt-4 border-t border-teal-primary/10">
-                      This is a preview of future AI capabilities
-                    </div>
+                      </CardContent>
+                    </Card>
                   </div>
                 )}
 
