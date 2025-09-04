@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/components/ui/use-toast";
-import { Phone, MessageSquare, Shield, ExternalLink, ArrowLeft, Upload, Eye, AlertTriangle, FileImage, CheckCircle } from 'lucide-react';
+import { Phone, MessageSquare, Shield, ExternalLink, ArrowLeft, Upload, Eye, AlertTriangle, FileImage, CheckCircle, Search } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const ReportConcern = () => {
@@ -174,8 +174,8 @@ const ReportConcern = () => {
                 <div className="w-16 h-16 mx-auto bg-teal-primary/10 rounded-full flex items-center justify-center mb-4">
                   <Eye className="h-8 w-8 text-teal-primary" />
                 </div>
-                <CardTitle className="text-2xl text-text-primary flex items-center justify-center gap-2">
-                  <span>🔍</span>
+                <CardTitle className="text-2xl font-bold text-text-primary flex items-center justify-center gap-3">
+                  <Search className="h-6 w-6 text-teal-primary" />
                   Use AI to Analyze Suspicious Content
                 </CardTitle>
                 <CardDescription className="text-lg text-text-secondary">
@@ -216,8 +216,8 @@ const ReportConcern = () => {
                     size="lg" 
                     className="bg-teal-primary hover:bg-teal-primary/90 text-white text-lg px-12 py-6"
                   >
-                    <Eye className="h-5 w-5 mr-2" />
-                    🔎 AI Scan
+                    <Search className="h-5 w-5 mr-2" />
+                    AI Scan
                   </Button>
                 </div>
 
