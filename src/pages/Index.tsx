@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Eye, Shield, Scan, MessageSquare, Camera, AlertTriangle, Globe, Phone, Users, ChevronRight } from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import cinematicBg from "@/assets/hero-cinematic-bg.jpg";
 
 const Index = () => {
   const [language, setLanguage] = useState<'en' | 'es'>('en');
@@ -112,26 +113,40 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-gradient-section">
       {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center justify-center bg-gradient-hero">
-        <div className="absolute inset-0 bg-gradient-to-br from-teal-navy/10 to-transparent"></div>
-        <div className="relative z-10 text-center max-w-4xl mx-auto px-4 py-20">
-          <h1 className="text-6xl md:text-8xl font-bold text-primary-foreground mb-6 tracking-tight">
+      <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+        {/* Cinematic Background */}
+        <div 
+          className="absolute inset-0 animate-cinematic-zoom"
+          style={{ 
+            backgroundImage: `url(${cinematicBg})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat'
+          }}
+        />
+        
+        {/* Animated Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-br from-teal-navy/60 via-black/40 to-teal-navy/50 animate-fade-overlay" />
+        
+        {/* Content */}
+        <div className="relative z-10 text-center max-w-4xl mx-auto px-4 py-20 animate-float">
+          <h1 className="text-6xl md:text-8xl font-bold text-primary-foreground mb-6 tracking-tight drop-shadow-lg">
             {currentText.title}
           </h1>
-          <h2 className="text-2xl md:text-3xl font-semibold text-primary-foreground/95 mb-4">
+          <h2 className="text-2xl md:text-3xl font-semibold text-primary-foreground/95 mb-4 drop-shadow-md">
             {currentText.subtitle}
           </h2>
-          <p className="text-xl md:text-2xl text-primary-foreground/85 mb-12 max-w-3xl mx-auto leading-relaxed">
+          <p className="text-xl md:text-2xl text-primary-foreground/85 mb-12 max-w-3xl mx-auto leading-relaxed drop-shadow-md">
             {currentText.description}
           </p>
           <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
             <Link to="/learn">
-              <Button variant="professional" size="lg" className="text-lg px-10 py-6 min-w-[200px]">
+              <Button variant="professional" size="lg" className="text-lg px-10 py-6 min-w-[200px] shadow-lg">
                 <Scan className="w-5 h-5 mr-2" />
                 {currentText.startLearning}
               </Button>
             </Link>
-            <Button variant="subtle" size="lg" className="text-lg px-8 py-6">
+            <Button variant="subtle" size="lg" className="text-lg px-8 py-6 shadow-lg backdrop-blur-sm">
               <AlertTriangle className="w-5 h-5 mr-2" />
               {currentText.reportConcern}
             </Button>
@@ -139,7 +154,7 @@ const Index = () => {
           <div className="mt-8">
             <Button 
               variant="ghost" 
-              className="text-primary-foreground/80 hover:text-primary-foreground hover:bg-primary-foreground/10"
+              className="text-primary-foreground/80 hover:text-primary-foreground hover:bg-primary-foreground/10 backdrop-blur-sm"
               onClick={() => setLanguage(language === 'en' ? 'es' : 'en')}
             >
               <Globe className="w-4 h-4 mr-2" />
