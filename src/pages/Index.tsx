@@ -146,10 +146,12 @@ const Index = () => {
                 {currentText.startLearning}
               </Button>
             </Link>
-            <Button variant="subtle" size="lg" className="text-lg px-8 py-6 shadow-lg backdrop-blur-sm">
-              <AlertTriangle className="w-5 h-5 mr-2" />
-              {currentText.reportConcern}
-            </Button>
+            <Link to="/report">
+              <Button variant="subtle" size="lg" className="text-lg px-8 py-6 shadow-lg backdrop-blur-sm">
+                <AlertTriangle className="w-5 h-5 mr-2" />
+                {currentText.reportConcern}
+              </Button>
+            </Link>
           </div>
           <div className="mt-8">
             <Button 
