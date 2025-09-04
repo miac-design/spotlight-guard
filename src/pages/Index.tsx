@@ -3,6 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Eye, Shield, Scan, MessageSquare, Camera, AlertTriangle, Globe, Phone, Users, ChevronRight } from "lucide-react";
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
 const Index = () => {
   const [language, setLanguage] = useState<'en' | 'es'>('en');
@@ -124,10 +125,12 @@ const Index = () => {
             {currentText.description}
           </p>
           <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
-            <Button variant="professional" size="lg" className="text-lg px-10 py-6 min-w-[200px]">
-              <Scan className="w-5 h-5 mr-2" />
-              {currentText.startLearning}
-            </Button>
+            <Link to="/learn">
+              <Button variant="professional" size="lg" className="text-lg px-10 py-6 min-w-[200px]">
+                <Scan className="w-5 h-5 mr-2" />
+                {currentText.startLearning}
+              </Button>
+            </Link>
             <Button variant="subtle" size="lg" className="text-lg px-8 py-6">
               <AlertTriangle className="w-5 h-5 mr-2" />
               {currentText.reportConcern}
@@ -193,10 +196,12 @@ const Index = () => {
             </div>
           </div>
           <div className="text-center mt-12">
-            <Button variant="trust" size="lg">
-              Learn More
-              <ChevronRight className="w-4 h-4 ml-2" />
-            </Button>
+            <Link to="/learn">
+              <Button variant="trust" size="lg">
+                Learn More
+                <ChevronRight className="w-4 h-4 ml-2" />
+              </Button>
+            </Link>
           </div>
         </div>
       </section>
