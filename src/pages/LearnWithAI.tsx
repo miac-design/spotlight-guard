@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Eye, Shield, MessageSquare, ArrowLeft, AlertTriangle, CheckCircle, XCircle, HelpCircle, Brain, MessageCircle } from 'lucide-react';
+import { Progress } from "@/components/ui/progress";
+import { Eye, Shield, MessageSquare, ArrowLeft, AlertTriangle, CheckCircle, XCircle, HelpCircle, Brain, MessageCircle, FileText, Home, Play } from 'lucide-react';
 import jobAdImage from "@/assets/job-ad-scenario.jpg";
 import roomImage from "@/assets/room-scenario.jpg";
 import chatImage from "@/assets/chat-scenario.jpg";
@@ -13,52 +14,94 @@ const LearnWithAI = () => {
   const [showQuizAnswer, setShowQuizAnswer] = useState(false);
   const [selectedAnswer, setSelectedAnswer] = useState<'safe' | 'suspicious' | null>(null);
   const [activeHelper, setActiveHelper] = useState<string | null>(null);
+  const [expandedCard, setExpandedCard] = useState<string | null>(null);
+  const [completedModules, setCompletedModules] = useState<Set<string>>(new Set());
 
-  const scenarios = [
+  // Learning Module Cards
+  const learningModules = [
     {
-      id: 'job-ad',
-      title: 'Can You Spot the Signs?',
-      subtitle: 'Here\'s a real-looking job offer. What signs of trafficking do you see?',
-      image: jobAdImage,
-      highlights: [
-        { text: 'No ID required', color: 'bg-red-500/20 border-red-500' },
-        { text: 'Cash daily', color: 'bg-yellow-500/20 border-yellow-500' },
-        { text: 'Late nights', color: 'bg-orange-500/20 border-orange-500' },
-        { text: 'Must be discrete', color: 'bg-red-500/20 border-red-500' }
-      ],
-      insight: 'These vague or coercive phrases are often red flags used in exploitative job ads. AI tools are trained to detect dangerous patterns in job language.',
-      takeaway: 'Even common posts can hide dangerous intent. Learn to spot linguistic red flags.',
-      icon: MessageSquare
+      id: 'job-ad-scenario',
+      title: 'Spot the Signs in a Job Ad',
+      description: 'Examine a job ad and see what dangers AI can highlight.',
+      icon: FileText,
+      type: 'scenario',
+      scenarioData: {
+        title: 'Can You Spot the Signs?',
+        subtitle: 'Here\'s a real-looking job offer. What signs of trafficking do you see?',
+        image: jobAdImage,
+        highlights: [
+          { text: 'No ID required', color: 'bg-red-500/20 border-red-500' },
+          { text: 'Cash daily', color: 'bg-yellow-500/20 border-yellow-500' },
+          { text: 'Late nights', color: 'bg-orange-500/20 border-orange-500' },
+          { text: 'Must be discrete', color: 'bg-red-500/20 border-red-500' }
+        ],
+        insight: 'These vague or coercive phrases are often red flags used in exploitative job ads. AI tools are trained to detect dangerous patterns in job language.',
+        takeaway: 'Even common posts can hide dangerous intent. Learn to spot linguistic red flags.',
+        icon: MessageSquare
+      }
     },
     {
-      id: 'room-photo',
-      title: 'Looks Normal — or Does It?',
-      subtitle: 'Look closely at this room. Can you identify signs of unsafe conditions?',
-      image: roomImage,
-      highlights: [
-        { text: 'Multiple mattresses', color: 'bg-red-500/20 border-red-500' },
-        { text: 'Covered windows', color: 'bg-yellow-500/20 border-yellow-500' },
-        { text: 'Interior locks', color: 'bg-orange-500/20 border-orange-500' },
-        { text: 'No personal items', color: 'bg-red-500/20 border-red-500' }
-      ],
-      insight: 'AI vision tools are trained to spot environments linked to trafficking: overcrowding, isolation, and lack of personalization.',
-      takeaway: 'A room might seem normal — until you know what to look for.',
-      icon: Eye
+      id: 'room-scenario',
+      title: 'Is This Room Safe?',
+      description: 'Look closely at a room and check for unsafe living conditions.',
+      icon: Home,
+      type: 'scenario',
+      scenarioData: {
+        title: 'Looks Normal — or Does It?',
+        subtitle: 'Look closely at this room. Can you identify signs of unsafe conditions?',
+        image: roomImage,
+        highlights: [
+          { text: 'Multiple mattresses', color: 'bg-red-500/20 border-red-500' },
+          { text: 'Covered windows', color: 'bg-yellow-500/20 border-yellow-500' },
+          { text: 'Interior locks', color: 'bg-orange-500/20 border-orange-500' },
+          { text: 'No personal items', color: 'bg-red-500/20 border-red-500' }
+        ],
+        insight: 'AI vision tools are trained to spot environments linked to trafficking: overcrowding, isolation, and lack of personalization.',
+        takeaway: 'A room might seem normal — until you know what to look for.',
+        icon: Eye
+      }
     },
     {
       id: 'chat-scenario',
-      title: 'A Conversation That Feels Off',
-      subtitle: 'This chat may look casual. What subtle signs stand out?',
-      image: chatImage,
-      highlights: [
-        { text: 'Don\'t tell anyone', color: 'bg-red-500/20 border-red-500' },
-        { text: 'You said you\'d pay me!', color: 'bg-yellow-500/20 border-yellow-500' },
-        { text: 'I need to go home', color: 'bg-orange-500/20 border-orange-500' },
-        { text: 'Keep your phone on', color: 'bg-red-500/20 border-red-500' }
-      ],
-      insight: 'Language models can detect fear, control, and manipulation that might not be obvious at first glance.',
-      takeaway: 'AI can read between the lines — even when it\'s just text.',
-      icon: Shield
+      title: 'Hidden Risks in a Chat',
+      description: 'Review a chat conversation and learn how AI detects manipulation.',
+      icon: MessageSquare,
+      type: 'scenario',
+      scenarioData: {
+        title: 'A Conversation That Feels Off',
+        subtitle: 'This chat may look casual. What subtle signs stand out?',
+        image: chatImage,
+        highlights: [
+          { text: 'Don\'t tell anyone', color: 'bg-red-500/20 border-red-500' },
+          { text: 'You said you\'d pay me!', color: 'bg-yellow-500/20 border-yellow-500' },
+          { text: 'I need to go home', color: 'bg-orange-500/20 border-orange-500' },
+          { text: 'Keep your phone on', color: 'bg-red-500/20 border-red-500' }
+        ],
+        insight: 'Language models can detect fear, control, and manipulation that might not be obvious at first glance.',
+        takeaway: 'AI can read between the lines — even when it\'s just text.',
+        icon: Shield
+      }
+    },
+    {
+      id: 'red-flags-game',
+      title: 'Spot the Red Flags',
+      description: 'Tap dangerous phrases in a fake job posting to learn why they\'re risky.',
+      icon: AlertTriangle,
+      type: 'red-flags'
+    },
+    {
+      id: 'trust-gut-quiz',
+      title: 'Trust Your Gut Quiz',
+      description: 'Decide if a message is safe or suspicious.',
+      icon: HelpCircle,
+      type: 'quiz'
+    },
+    {
+      id: 'ai-helper',
+      title: 'Ask the AI Helper',
+      description: 'See how AI can act as a safety assistant with simple questions.',
+      icon: Brain,
+      type: 'ai-helper'
     }
   ];
 
@@ -136,6 +179,20 @@ const LearnWithAI = () => {
     setSelectedAnswer(null);
   };
 
+  const expandCard = (cardId: string) => {
+    setExpandedCard(cardId);
+  };
+
+  const collapseCard = () => {
+    setExpandedCard(null);
+  };
+
+  const markAsCompleted = (moduleId: string) => {
+    setCompletedModules(prev => new Set(prev).add(moduleId));
+  };
+
+  const progressPercentage = (completedModules.size / learningModules.length) * 100;
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-secondary/20">
       {/* Header */}
@@ -161,382 +218,435 @@ const LearnWithAI = () => {
         </div>
       </header>
 
-      <main className="container mx-auto px-4 py-8 space-y-12">
-        {/* Scenarios */}
-        {scenarios.map((scenario, index) => {
-          const IconComponent = scenario.icon;
-          const isRevealed = activeReveal === scenario.id;
-          
-          return (
-            <section key={scenario.id} className="space-y-6">
-              <div className="text-center space-y-2">
-                <div className="flex items-center justify-center gap-2 text-teal-primary">
-                  <IconComponent className="h-6 w-6" />
-                  <span className="text-sm font-medium">Scenario {index + 1}</span>
-                </div>
-                <h2 className="text-3xl font-bold text-text-primary">{scenario.title}</h2>
-                <p className="text-lg text-text-secondary max-w-2xl mx-auto">{scenario.subtitle}</p>
-              </div>
-
-              <Card className="overflow-hidden shadow-professional">
-                <div className="grid md:grid-cols-2 gap-0">
-                  {/* Image Side */}
-                  <div className="relative bg-neutral-light p-6 flex items-center justify-center min-h-[400px]">
-                    <div className="relative w-full max-w-md">
-                      <img 
-                        src={scenario.image} 
-                        alt={scenario.title}
-                        className="w-full h-auto rounded-lg shadow-card"
-                      />
-                      
-                      {/* Highlight Overlays */}
-                      {isRevealed && (
-                        <div className="absolute inset-0 rounded-lg">
-                          {scenario.highlights.map((highlight, idx) => (
-                            <div
-                              key={idx}
-                              className={`absolute rounded-md border-2 ${highlight.color} animate-pulse`}
-                              style={{
-                                top: `${15 + (idx * 18)}%`,
-                                left: `${10 + (idx % 2) * 40}%`,
-                                width: '30%',
-                                height: '8%',
-                              }}
-                            >
-                              <div className="absolute -top-6 left-0 text-xs font-medium bg-background px-2 py-1 rounded shadow-sm">
-                                {highlight.text}
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Content Side */}
-                  <div className="p-6 flex flex-col justify-center space-y-6">
-                    {!isRevealed ? (
-                      <>
-                        <div className="space-y-4">
-                          <p className="text-text-secondary">
-                            Take a moment to examine the image carefully. What details stand out to you?
-                          </p>
-                          <div className="bg-neutral-light p-4 rounded-lg border-l-4 border-teal-primary">
-                            <p className="text-sm text-text-secondary font-medium">
-                              Look for signs of control, isolation, or coercion that might not be immediately obvious.
-                            </p>
-                          </div>
-                        </div>
-                        
-                        <Button 
-                          onClick={() => setActiveReveal(scenario.id)}
-                          className="w-full"
-                          variant="professional"
-                        >
-                          <Eye className="h-4 w-4 mr-2" />
-                          See What AI Found
-                        </Button>
-                      </>
-                    ) : (
-                      <>
-                        <div className="space-y-4">
-                          <div className="bg-accent-trust/10 p-4 rounded-lg border border-accent-trust/20">
-                            <h4 className="font-semibold text-accent-trust mb-2 flex items-center gap-2">
-                              <AlertTriangle className="h-4 w-4" />
-                              AI Analysis
-                            </h4>
-                            <p className="text-sm text-text-primary">{scenario.insight}</p>
-                          </div>
-                          
-                          <div className="bg-teal-light/10 p-4 rounded-lg border border-teal-light/20">
-                            <h4 className="font-semibold text-teal-primary mb-2">Key Takeaway</h4>
-                            <p className="text-sm text-text-primary">{scenario.takeaway}</p>
-                          </div>
-                          
-                          <div className="space-y-2">
-                            <h5 className="font-medium text-text-primary">Detected Red Flags:</h5>
-                            <ul className="space-y-1">
-                              {scenario.highlights.map((highlight, idx) => (
-                                <li key={idx} className="flex items-center gap-2 text-sm">
-                                  <div className={`w-3 h-3 rounded border ${highlight.color}`}></div>
-                                  {highlight.text}
-                                </li>
-                              ))}
-                            </ul>
-                          </div>
-                        </div>
-                        
-                        <Button 
-                          onClick={() => setActiveReveal(null)}
-                          variant="subtle"
-                          className="w-full"
-                        >
-                          Reset Analysis
-                        </Button>
-                      </>
-                    )}
-                  </div>
-                </div>
-              </Card>
-            </section>
-          );
-        })}
-
-        {/* Section 4: What's Wrong Here? */}
-        <section className="space-y-6">
-          <div className="text-center space-y-2">
-            <div className="flex items-center justify-center gap-2 text-teal-primary">
-              <AlertTriangle className="h-6 w-6" />
-              <span className="text-sm font-medium">Section 4</span>
-            </div>
-            <h2 className="text-3xl font-bold text-text-primary">Can You Spot What's Not Safe?</h2>
-            <p className="text-lg text-text-secondary max-w-2xl mx-auto">
-              Tap each part of this job posting to learn why it's dangerous
-            </p>
+      <main className="container mx-auto px-4 py-8 space-y-8">
+        {/* Progress Tracking */}
+        <section className="space-y-4">
+          <div className="text-center">
+            <h2 className="text-2xl font-bold text-text-primary mb-2">
+              You've explored {completedModules.size} of {learningModules.length} scenarios
+            </h2>
+            <Progress value={progressPercentage} className="w-full max-w-md mx-auto" />
           </div>
-
-          <Card className="overflow-hidden shadow-professional max-w-2xl mx-auto">
-            <CardContent className="p-8">
-              <div className="bg-neutral-light p-6 rounded-lg border-2 border-dashed border-neutral-medium">
-                <h3 className="text-xl font-bold text-text-primary mb-4 text-center">Quick Job Opportunity!</h3>
-                <div className="space-y-3 text-lg">
-                  {jobFlyerFlags.map((flag) => (
-                    <div key={flag.id} className="relative">
-                      <button
-                        onClick={() => handleFlagTap(flag.id)}
-                        className={`px-3 py-1 rounded-md transition-all duration-200 text-left w-auto inline-block ${
-                          tappedFlags.has(flag.id)
-                            ? 'bg-red-500/20 border-2 border-red-500 text-red-800'
-                            : 'hover:bg-neutral-medium hover:shadow-sm'
-                        }`}
-                      >
-                        {flag.text}
-                      </button>
-                      {tappedFlags.has(flag.id) && (
-                        <div className="absolute z-10 left-0 top-full mt-2 bg-background p-3 rounded-lg shadow-professional border max-w-xs animate-fade-in">
-                          <p className="text-sm font-medium text-text-primary">{flag.tooltip}</p>
-                        </div>
-                      )}
-                      {flag.id < jobFlyerFlags.length - 1 && <span className="text-text-secondary">. </span>}
-                    </div>
-                  ))}
-                </div>
-              </div>
-              {tappedFlags.size > 0 && (
-                <div className="mt-6 p-4 bg-accent-trust/10 rounded-lg border border-accent-trust/20">
-                  <p className="text-sm text-text-primary">
-                    <strong>Found {tappedFlags.size} red flag{tappedFlags.size !== 1 ? 's' : ''}!</strong> Real job offers use clear, professional language and follow legal hiring practices.
-                  </p>
-                </div>
-              )}
-            </CardContent>
-          </Card>
         </section>
 
-        {/* Section 5: Safe or Suspicious Quiz */}
-        <section className="space-y-6">
-          <div className="text-center space-y-2">
-            <div className="flex items-center justify-center gap-2 text-teal-primary">
-              <HelpCircle className="h-6 w-6" />
-              <span className="text-sm font-medium">Section 5</span>
-            </div>
-            <h2 className="text-3xl font-bold text-text-primary">Learn to Trust Your Gut</h2>
-            <p className="text-lg text-text-secondary max-w-2xl mx-auto">
-              Read each message and decide: Is this safe or suspicious?
-            </p>
-          </div>
-
-          <Card className="overflow-hidden shadow-professional max-w-2xl mx-auto">
-            <CardContent className="p-8">
-              <div className="mb-6">
-                <div className="flex justify-between items-center mb-4">
-                  <span className="text-sm text-text-secondary">Question {quizIndex + 1} of {quizQuestions.length}</span>
-                  <div className="flex gap-1">
-                    {quizQuestions.map((_, idx) => (
-                      <div
-                        key={idx}
-                        className={`w-2 h-2 rounded-full ${
-                          idx === quizIndex ? 'bg-teal-primary' : 'bg-neutral-medium'
-                        }`}
-                      />
-                    ))}
-                  </div>
-                </div>
-                
-                <div className="bg-neutral-light p-4 rounded-lg mb-6">
-                  <p className="text-lg text-text-primary italic">
-                    "{quizQuestions[quizIndex].message}"
-                  </p>
-                </div>
-
-                {!showQuizAnswer ? (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <Button
-                      onClick={() => handleQuizAnswer('safe')}
-                      variant="outline"
-                      size="lg"
-                      className="h-16 text-lg"
-                    >
-                      <CheckCircle className="h-6 w-6 mr-2 text-green-600" />
-                      Safe
-                    </Button>
-                    <Button
-                      onClick={() => handleQuizAnswer('suspicious')}
-                      variant="outline"
-                      size="lg"
-                      className="h-16 text-lg"
-                    >
-                      <XCircle className="h-6 w-6 mr-2 text-red-600" />
-                      Suspicious
-                    </Button>
-                  </div>
-                ) : (
-                  <div className="space-y-4">
-                    <div className={`p-4 rounded-lg border-2 ${
-                      selectedAnswer === quizQuestions[quizIndex].answer
-                        ? 'bg-green-50 border-green-500 text-green-800'
-                        : 'bg-red-50 border-red-500 text-red-800'
-                    }`}>
-                      <p className="font-medium">
-                        {selectedAnswer === quizQuestions[quizIndex].answer ? '✓ ' : '✗ '}
-                        {quizQuestions[quizIndex].explanation}
-                      </p>
-                    </div>
-                    
-                    <div className="flex justify-center">
-                      {quizIndex < quizQuestions.length - 1 ? (
-                        <Button onClick={nextQuizQuestion} variant="professional">
-                          Next Question
-                        </Button>
-                      ) : (
-                        <div className="text-center space-y-4">
-                          <p className="text-text-secondary">You've completed the quiz!</p>
-                          <Button onClick={resetQuiz} variant="subtle">
-                            Start Over
-                          </Button>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                )}
-              </div>
-            </CardContent>
-          </Card>
-        </section>
-
-        {/* Section 6: AI Helper Cards */}
-        <section className="space-y-6">
-          <div className="text-center space-y-2">
-            <div className="flex items-center justify-center gap-2 text-teal-primary">
-              <Brain className="h-6 w-6" />
-              <span className="text-sm font-medium">Section 6</span>
-            </div>
-            <h2 className="text-3xl font-bold text-text-primary">Not Sure What to Say? Tap a Question to Ask the AI Helper</h2>
-            <p className="text-lg text-text-secondary max-w-2xl mx-auto">
-              Try these example questions with our AI assistant
-            </p>
-          </div>
-
-          <div className="grid gap-6 max-w-4xl mx-auto">
-            {helperCards.map((helper) => {
-              const IconComponent = helper.icon;
-              const isActive = activeHelper === helper.id;
+        {/* Card Grid */}
+        {!expandedCard ? (
+          <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {learningModules.map((module) => {
+              const IconComponent = module.icon;
+              const isCompleted = completedModules.has(module.id);
               
               return (
-                <Card key={helper.id} className="shadow-card hover:shadow-professional transition-all duration-200">
-                  <CardContent className="p-6">
-                    <Button
-                      onClick={() => setActiveHelper(isActive ? null : helper.id)}
-                      variant="outline"
-                      size="lg" 
-                      className="w-full h-auto p-6 text-left justify-start text-lg"
+                <Card 
+                  key={module.id}
+                  className="group cursor-pointer transition-all duration-300 hover:shadow-lg hover:shadow-teal-primary/20 hover:scale-105"
+                  onClick={() => expandCard(module.id)}
+                >
+                  <CardHeader className="text-center pb-4">
+                    <div className="w-16 h-16 mx-auto bg-teal-primary/10 rounded-full flex items-center justify-center mb-4 group-hover:bg-teal-primary/20 transition-colors">
+                      <IconComponent className="h-8 w-8 text-teal-primary" />
+                    </div>
+                    <CardTitle className="text-xl font-bold text-text-primary flex items-center justify-center gap-2">
+                      {module.title}
+                      {isCompleted && (
+                        <CheckCircle className="h-5 w-5 text-green-600" />
+                      )}
+                    </CardTitle>
+                    <CardDescription className="text-text-secondary">
+                      {module.description}
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="text-center">
+                    <Button 
+                      className="bg-gradient-to-r from-teal-primary to-teal-dark text-white hover:from-teal-dark hover:to-teal-primary w-full"
                     >
-                      <IconComponent className="h-6 w-6 mr-3 text-teal-primary" />
-                      {helper.question}
+                      <Play className="h-4 w-4 mr-2" />
+                      Start
                     </Button>
-                    
-                    {isActive && (
-                      <div className="mt-4 p-4 bg-teal-primary/5 rounded-lg border border-teal-primary/20 animate-fade-in">
-                        <div className="flex items-start gap-3">
-                          <div className="w-8 h-8 rounded-full bg-teal-primary/10 flex items-center justify-center flex-shrink-0">
-                            <Shield className="h-4 w-4 text-teal-primary" />
-                          </div>
-                          <div>
-                            <p className="font-medium text-text-primary mb-2">AI Helper Response:</p>
-                            <p className="text-text-secondary italic">{helper.response}</p>
-                          </div>
-                        </div>
-                      </div>
-                    )}
                   </CardContent>
                 </Card>
               );
             })}
-          </div>
-          
-          <div className="text-center">
-            <p className="text-sm text-text-secondary mb-4">
-              These are example responses. The real AI helper is coming soon!
-            </p>
-          </div>
-        </section>
-
-        {/* Final Tip Section */}
-        <section className="text-center space-y-6 py-12">
-          <Card className="bg-gradient-to-br from-teal-primary/5 to-neutral-light/50 border-teal-primary/20 max-w-3xl mx-auto">
-            <CardContent className="p-8">
-              <h2 className="text-2xl font-bold text-text-primary mb-4">
-                You Don't Need to Be a Tech Expert to Stay Safe
-              </h2>
-              <p className="text-lg text-text-secondary mb-6">
-                AI can help — but your eyes and instincts matter too. 
-                If something feels wrong, trust your gut. We're here to help.
-              </p>
-              
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Button variant="professional" size="lg" className="flex items-center gap-2">
-                  <Eye className="h-4 w-4" />
-                  See More Examples
-                </Button>
-                <Button variant="trust" size="lg" className="flex items-center gap-2">
-                  <AlertTriangle className="h-4 w-4" />
-                  Report a Concern
-                </Button>
+          </section>
+        ) : (
+          /* Expanded Card Content */
+          <section className="space-y-6">
+            <div className="flex items-center gap-4 mb-6">
+              <Button 
+                variant="ghost" 
+                size="sm"
+                onClick={collapseCard}
+                className="text-muted-foreground hover:text-foreground"
+              >
+                <ArrowLeft className="h-4 w-4 mr-2" />
+                Back to Cards
+              </Button>
+              <div>
+                <h2 className="text-2xl font-bold text-teal-primary">
+                  {learningModules.find(m => m.id === expandedCard)?.title}
+                </h2>
               </div>
-            </CardContent>
-          </Card>
-        </section>
+            </div>
 
-        {/* Closing Section */}
-        <section className="text-center space-y-8 py-12">
-          <Card className="bg-gradient-to-br from-teal-primary/5 to-accent-trust/5 border-teal-primary/20">
-            <CardHeader>
-              <CardTitle className="text-2xl text-teal-primary">
-                AI helps us see what's hard to notice.
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <p className="text-text-secondary max-w-2xl mx-auto">
-                These examples show how technology can assist in detecting red flags — not just through vision, 
-                but language and context too. Together, we can take small steps that protect lives.
-              </p>
+            {/* Scenario Content */}
+            {expandedCard?.includes('scenario') && (() => {
+              const module = learningModules.find(m => m.id === expandedCard);
+              const scenario = module?.scenarioData;
+              if (!scenario) return null;
               
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Button variant="professional" size="lg" className="flex items-center gap-2">
-                  <Shield className="h-4 w-4" />
-                  Continue Learning
-                </Button>
-                <Button variant="trust" size="lg" className="flex items-center gap-2">
-                  <AlertTriangle className="h-4 w-4" />
-                  Report a Concern
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        </section>
-      </main>
-    </div>
-  );
-};
+              const IconComponent = scenario.icon;
+              const isRevealed = activeReveal === expandedCard;
+              
+              return (
+                <Card className="overflow-hidden shadow-professional">
+                  <div className="grid md:grid-cols-2 gap-0">
+                    {/* Image Side */}
+                    <div className="relative bg-neutral-light p-6 flex items-center justify-center min-h-[400px]">
+                      <div className="relative w-full max-w-md">
+                        <img 
+                          src={scenario.image} 
+                          alt={scenario.title}
+                          className="w-full h-auto rounded-lg shadow-card"
+                        />
+                        
+                        {/* Highlight Overlays */}
+                        {isRevealed && (
+                          <div className="absolute inset-0 rounded-lg">
+                            {scenario.highlights.map((highlight, idx) => (
+                              <div
+                                key={idx}
+                                className={`absolute rounded-md border-2 ${highlight.color} animate-pulse`}
+                                style={{
+                                  top: `${15 + (idx * 18)}%`,
+                                  left: `${10 + (idx % 2) * 40}%`,
+                                  width: '30%',
+                                  height: '8%',
+                                }}
+                              >
+                                <div className="absolute -top-6 left-0 text-xs font-medium bg-background px-2 py-1 rounded shadow-sm">
+                                  {highlight.text}
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    </div>
 
-export default LearnWithAI;
+                    {/* Content Side */}
+                    <div className="p-6 flex flex-col justify-center space-y-6">
+                      <div className="text-center space-y-2">
+                        <div className="flex items-center justify-center gap-2 text-teal-primary">
+                          <IconComponent className="h-6 w-6" />
+                        </div>
+                        <h3 className="text-2xl font-bold text-text-primary">{scenario.title}</h3>
+                        <p className="text-text-secondary">{scenario.subtitle}</p>
+                      </div>
+
+                      {!isRevealed ? (
+                        <>
+                          <div className="space-y-4">
+                            <p className="text-text-secondary">
+                              Take a moment to examine the image carefully. What details stand out to you?
+                            </p>
+                            <div className="bg-neutral-light p-4 rounded-lg border-l-4 border-teal-primary">
+                              <p className="text-sm text-text-secondary font-medium">
+                                Look for signs of control, isolation, or coercion that might not be immediately obvious.
+                              </p>
+                            </div>
+                          </div>
+                          
+                          <Button 
+                            onClick={() => {
+                              setActiveReveal(expandedCard);
+                              markAsCompleted(expandedCard);
+                            }}
+                            className="w-full"
+                            variant="professional"
+                          >
+                            <Eye className="h-4 w-4 mr-2" />
+                            See What AI Found
+                          </Button>
+                        </>
+                      ) : (
+                        <>
+                          <div className="space-y-4">
+                            <div className="bg-accent-trust/10 p-4 rounded-lg border border-accent-trust/20">
+                              <h4 className="font-semibold text-accent-trust mb-2 flex items-center gap-2">
+                                <AlertTriangle className="h-4 w-4" />
+                                AI Analysis
+                              </h4>
+                              <p className="text-sm text-text-primary">{scenario.insight}</p>
+                            </div>
+                            
+                            <div className="bg-teal-light/10 p-4 rounded-lg border border-teal-light/20">
+                              <h4 className="font-semibold text-teal-primary mb-2">Key Takeaway</h4>
+                              <p className="text-sm text-text-primary">{scenario.takeaway}</p>
+                            </div>
+                            
+                            <div className="space-y-2">
+                              <h5 className="font-medium text-text-primary">Detected Red Flags:</h5>
+                              <ul className="space-y-1">
+                                {scenario.highlights.map((highlight, idx) => (
+                                  <li key={idx} className="flex items-center gap-2 text-sm">
+                                    <div className={`w-3 h-3 rounded border ${highlight.color}`}></div>
+                                    {highlight.text}
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                          </div>
+                          
+                          <Button 
+                            onClick={() => setActiveReveal(null)}
+                            variant="subtle"
+                            className="w-full"
+                          >
+                            Reset Analysis
+                          </Button>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                </Card>
+              );
+            })()}
+
+            {/* Red Flags Game */}
+            {expandedCard === 'red-flags-game' && (
+              <Card className="overflow-hidden shadow-professional max-w-2xl mx-auto">
+                <CardHeader className="text-center">
+                  <CardTitle className="text-2xl font-bold text-text-primary">Can You Spot What's Not Safe?</CardTitle>
+                  <CardDescription className="text-lg text-text-secondary">
+                    Tap each part of this job posting to learn why it's dangerous
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="p-8">
+                  <div className="bg-neutral-light p-6 rounded-lg border-2 border-dashed border-neutral-medium">
+                    <h3 className="text-xl font-bold text-text-primary mb-4 text-center">Quick Job Opportunity!</h3>
+                    <div className="space-y-3 text-lg">
+                      {jobFlyerFlags.map((flag) => (
+                        <div key={flag.id} className="relative">
+                          <button
+                            onClick={() => {
+                              handleFlagTap(flag.id);
+                              if (tappedFlags.size >= jobFlyerFlags.length - 1) {
+                                markAsCompleted('red-flags-game');
+                              }
+                            }}
+                            className={`px-3 py-1 rounded-md transition-all duration-200 text-left w-auto inline-block ${
+                              tappedFlags.has(flag.id)
+                                ? 'bg-red-500/20 border-2 border-red-500 text-red-800'
+                                : 'hover:bg-neutral-medium hover:shadow-sm'
+                            }`}
+                          >
+                            {flag.text}
+                          </button>
+                          {tappedFlags.has(flag.id) && (
+                            <div className="absolute z-10 left-0 top-full mt-2 bg-background p-3 rounded-lg shadow-professional border max-w-xs animate-fade-in">
+                              <p className="text-sm font-medium text-text-primary">{flag.tooltip}</p>
+                            </div>
+                          )}
+                          {flag.id < jobFlyerFlags.length - 1 && <span className="text-text-secondary">. </span>}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  {tappedFlags.size > 0 && (
+                    <div className="mt-6 p-4 bg-accent-trust/10 rounded-lg border border-accent-trust/20">
+                      <p className="text-sm text-text-primary">
+                        <strong>Found {tappedFlags.size} red flag{tappedFlags.size !== 1 ? 's' : ''}!</strong> Real job offers use clear, professional language and follow legal hiring practices.
+                      </p>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Quiz Game */}
+            {expandedCard === 'trust-gut-quiz' && (
+              <Card className="overflow-hidden shadow-professional max-w-2xl mx-auto">
+                <CardHeader className="text-center">
+                  <CardTitle className="text-2xl font-bold text-text-primary">Learn to Trust Your Gut</CardTitle>
+                  <CardDescription className="text-lg text-text-secondary">
+                    Read each message and decide: Is this safe or suspicious?
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="p-8">
+                  <div className="mb-6">
+                    <div className="flex justify-between items-center mb-4">
+                      <span className="text-sm text-text-secondary">Question {quizIndex + 1} of {quizQuestions.length}</span>
+                      <div className="flex gap-1">
+                        {quizQuestions.map((_, idx) => (
+                          <div
+                            key={idx}
+                            className={`w-2 h-2 rounded-full ${
+                              idx === quizIndex ? 'bg-teal-primary' : 'bg-neutral-medium'
+                            }`}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                    
+                    <div className="bg-neutral-light p-4 rounded-lg mb-6">
+                      <p className="text-lg text-text-primary italic">
+                        "{quizQuestions[quizIndex].message}"
+                      </p>
+                    </div>
+
+                    {!showQuizAnswer ? (
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <Button
+                          onClick={() => handleQuizAnswer('safe')}
+                          variant="outline"
+                          size="lg"
+                          className="h-16 text-lg"
+                        >
+                          <CheckCircle className="h-6 w-6 mr-2 text-green-600" />
+                          Safe
+                        </Button>
+                          <Button
+                            onClick={() => {
+                              handleQuizAnswer('suspicious');
+                              if (quizIndex === quizQuestions.length - 1) {
+                                markAsCompleted('trust-gut-quiz');
+                              }
+                            }}
+                            variant="outline"
+                            size="lg"
+                            className="h-16 text-lg"
+                          >
+                            <XCircle className="h-6 w-6 mr-2 text-red-600" />
+                            Suspicious
+                          </Button>
+                        </div>
+                      ) : (
+                        <div className="space-y-4">
+                          <div className={`p-4 rounded-lg border-2 ${
+                            selectedAnswer === quizQuestions[quizIndex].answer
+                              ? 'bg-green-50 border-green-500 text-green-800'
+                              : 'bg-red-50 border-red-500 text-red-800'
+                          }`}>
+                            <p className="font-medium">
+                              {selectedAnswer === quizQuestions[quizIndex].answer ? '✓ ' : '✗ '}
+                              {quizQuestions[quizIndex].explanation}
+                            </p>
+                          </div>
+                          
+                          <div className="flex justify-center">
+                            {quizIndex < quizQuestions.length - 1 ? (
+                              <Button onClick={nextQuizQuestion} variant="professional">
+                                Next Question
+                              </Button>
+                            ) : (
+                              <div className="text-center space-y-4">
+                                <p className="text-text-secondary">You've completed the quiz!</p>
+                                <Button onClick={resetQuiz} variant="subtle">
+                                  Start Over
+                                </Button>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+
+              {/* AI Helper Cards */}
+              {expandedCard === 'ai-helper' && (
+                <Card className="overflow-hidden shadow-professional max-w-4xl mx-auto">
+                  <CardHeader className="text-center">
+                    <CardTitle className="text-2xl font-bold text-text-primary">Not Sure What to Say? Tap a Question to Ask the AI Helper</CardTitle>
+                    <CardDescription className="text-lg text-text-secondary">
+                      Try these example questions with our AI assistant
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="p-8">
+                    <div className="grid gap-6">
+                      {helperCards.map((helper) => {
+                        const IconComponent = helper.icon;
+                        const isActive = activeHelper === helper.id;
+                        
+                        return (
+                          <Card key={helper.id} className="shadow-card hover:shadow-professional transition-all duration-200">
+                            <CardContent className="p-6">
+                              <Button
+                                onClick={() => {
+                                  setActiveHelper(isActive ? null : helper.id);
+                                  if (!isActive) {
+                                    markAsCompleted('ai-helper');
+                                  }
+                                }}
+                                variant="outline"
+                                size="lg" 
+                                className="w-full h-auto p-6 text-left justify-start text-lg"
+                              >
+                                <IconComponent className="h-6 w-6 mr-3 text-teal-primary" />
+                                {helper.question}
+                              </Button>
+                              
+                              {isActive && (
+                                <div className="mt-4 p-4 bg-teal-primary/5 rounded-lg border border-teal-primary/20 animate-fade-in">
+                                  <div className="flex items-start gap-3">
+                                    <div className="w-8 h-8 rounded-full bg-teal-primary/10 flex items-center justify-center flex-shrink-0">
+                                      <Shield className="h-4 w-4 text-teal-primary" />
+                                    </div>
+                                    <div>
+                                      <p className="font-medium text-text-primary mb-2">AI Helper Response:</p>
+                                      <p className="text-text-secondary italic">{helper.response}</p>
+                                    </div>
+                                  </div>
+                                </div>
+                              )}
+                            </CardContent>
+                          </Card>
+                        );
+                      })}
+                    </div>
+                    
+                    <div className="text-center mt-6">
+                      <p className="text-sm text-text-secondary mb-4">
+                        These are example responses. The real AI helper is coming soon!
+                      </p>
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+            </section>
+          )}
+
+          {/* Final Tip Section - Only show when not in expanded view */}
+          {!expandedCard && (
+            <section className="text-center space-y-6 py-12">
+              <Card className="bg-gradient-to-br from-teal-primary/5 to-neutral-light/50 border-teal-primary/20 max-w-3xl mx-auto">
+                <CardContent className="p-8">
+                  <h2 className="text-2xl font-bold text-text-primary mb-4">
+                    You Don't Need to Be a Tech Expert to Stay Safe
+                  </h2>
+                  <p className="text-lg text-text-secondary mb-6">
+                    AI can help — but your eyes and instincts matter too. 
+                    If something feels wrong, trust your gut. We're here to help.
+                  </p>
+                  
+                  <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                    <Button variant="professional" size="lg" className="flex items-center gap-2">
+                      <Eye className="h-4 w-4" />
+                      See More Examples
+                    </Button>
+                    <Button variant="trust" size="lg" className="flex items-center gap-2">
+                      <AlertTriangle className="h-4 w-4" />
+                      Report a Concern
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            </section>
+          )}
+        </main>
+      </div>
+    );
+  };
+
+  export default LearnWithAI;
