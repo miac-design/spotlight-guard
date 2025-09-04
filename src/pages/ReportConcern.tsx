@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/components/ui/use-toast";
-import { Phone, MessageSquare, Shield, ExternalLink, ArrowLeft, Upload, Eye, AlertTriangle, FileImage, CheckCircle, Search } from 'lucide-react';
+import { Phone, MessageSquare, Shield, ExternalLink, ArrowLeft, Upload, Eye, AlertTriangle, FileImage, CheckCircle, Search, AlertCircle, Lightbulb } from 'lucide-react';
+import { RiskGauge } from '@/components/ui/risk-gauge';
 import { Link } from 'react-router-dom';
 
 const ReportConcern = () => {
@@ -221,23 +222,83 @@ const ReportConcern = () => {
                   </Button>
                 </div>
 
-                {/* Simulated AI Output */}
+                {/* AI Analysis Results */}
                 {showSimulation && (
-                  <div className="bg-neutral-light/50 backdrop-blur-sm p-6 rounded-lg border border-teal-primary/20 animate-in fade-in duration-500">
-                    <div className="flex items-start gap-3 mb-4">
+                  <div className="bg-neutral-light/50 backdrop-blur-sm p-8 rounded-lg border border-teal-primary/20 animate-in fade-in duration-1000 space-y-6">
+                    {/* Header */}
+                    <div className="flex items-center gap-3 mb-6">
                       <div className="w-8 h-8 bg-teal-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
                         <Eye className="h-4 w-4 text-teal-primary" />
                       </div>
-                      <div>
-                        <h4 className="font-semibold text-teal-primary mb-2">AI Analysis Complete</h4>
-                        <div className="space-y-2 text-sm text-text-secondary blur-sm">
-                          <p>• Found 3 potential warning signs in this image</p>
-                          <p>• Detected phrases commonly used in exploitative scenarios</p>
-                          <p>• Identified environmental factors suggesting control</p>
+                      <h4 className="font-semibold text-teal-primary text-lg">AI Analysis Complete</h4>
+                    </div>
+
+                    {/* Risk Gauge */}
+                    <div className="bg-white/50 p-6 rounded-lg">
+                      <RiskGauge score={80} />
+                    </div>
+
+                    {/* Analysis Results */}
+                    <div className="space-y-6">
+                      {/* Red Flags */}
+                      <div className="space-y-3">
+                        <h5 className="font-semibold text-text-primary flex items-center gap-2">
+                          <AlertCircle className="h-4 w-4 text-red-500" />
+                          Red Flags Detected:
+                        </h5>
+                        <div className="space-y-2 text-sm text-text-primary ml-6">
+                          <div className="flex items-start gap-2">
+                            <span className="text-red-500">•</span>
+                            <span>Window covered, little light</span>
+                          </div>
+                          <div className="flex items-start gap-2">
+                            <span className="text-red-500">•</span>
+                            <span>Overnight work mentioned</span>
+                          </div>
+                          <div className="flex items-start gap-2">
+                            <span className="text-red-500">•</span>
+                            <span>Secrecy language: "Don't tell anyone"</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Explanation */}
+                      <div className="space-y-3">
+                        <h5 className="font-semibold text-text-primary flex items-center gap-2">
+                          <Lightbulb className="h-4 w-4 text-amber-500" />
+                          Explanation:
+                        </h5>
+                        <p className="text-sm text-text-secondary ml-6">
+                          This photo shows multiple signs of unsafe conditions that could indicate human trafficking 
+                          or exploitation. The combination of isolation, control language, and unusual work demands 
+                          raises significant safety concerns.
+                        </p>
+                      </div>
+
+                      {/* Next Steps */}
+                      <div className="space-y-3">
+                        <h5 className="font-semibold text-text-primary flex items-center gap-2">
+                          <Shield className="h-4 w-4 text-teal-primary" />
+                          Next Steps:
+                        </h5>
+                        <div className="space-y-2 text-sm text-text-secondary ml-6">
+                          <div className="flex items-start gap-2">
+                            <span className="text-teal-primary">•</span>
+                            <span>Trust your instincts</span>
+                          </div>
+                          <div className="flex items-start gap-2">
+                            <span className="text-teal-primary">•</span>
+                            <span>Share with a trusted hotline or counselor</span>
+                          </div>
+                          <div className="flex items-start gap-2">
+                            <span className="text-teal-primary">•</span>
+                            <span>Consider reporting to authorities if safe to do so</span>
+                          </div>
                         </div>
                       </div>
                     </div>
-                    <div className="text-xs text-muted-foreground italic text-center">
+
+                    <div className="text-xs text-muted-foreground italic text-center pt-4 border-t border-teal-primary/10">
                       This is a preview of future AI capabilities
                     </div>
                   </div>
