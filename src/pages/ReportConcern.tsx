@@ -1,12 +1,46 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Phone, MessageSquare, Shield, ExternalLink, ArrowLeft, Upload, Eye, AlertTriangle } from 'lucide-react';
+import { useToast } from "@/components/ui/use-toast";
+import { Phone, MessageSquare, Shield, ExternalLink, ArrowLeft, Upload, Eye, AlertTriangle, FileImage, CheckCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const ReportConcern = () => {
+  const [uploadedFile, setUploadedFile] = useState<File | null>(null);
+  const [showSimulation, setShowSimulation] = useState(false);
+  const { toast } = useToast();
+
   const handleQuickExit = () => {
     window.location.replace('https://google.com');
+  };
+
+  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      setUploadedFile(file);
+      setShowSimulation(false);
+    }
+  };
+
+  const handleAIScan = () => {
+    if (!uploadedFile) {
+      toast({
+        title: "No file selected",
+        description: "Please upload an image or screenshot first.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    toast({
+      title: "Thank you for trying our AI tool",
+      description: "In future updates, this tool will analyze your upload and explain what it sees. Stay tuned.",
+    });
+
+    // Show simulation after a brief delay
+    setTimeout(() => {
+      setShowSimulation(true);
+    }, 1500);
   };
 
   return (
@@ -133,38 +167,86 @@ const ReportConcern = () => {
             </Card>
           </section>
 
-          {/* Coming Soon AI Detection */}
+          {/* AI Analysis Section */}
           <section>
-            <Card className="shadow-card border-muted-foreground/20 opacity-75">
+            <Card className="shadow-professional border-teal-primary/20">
               <CardHeader className="text-center pb-6">
-                <div className="w-16 h-16 mx-auto bg-muted/50 rounded-full flex items-center justify-center mb-4">
-                  <Eye className="h-8 w-8 text-muted-foreground" />
+                <div className="w-16 h-16 mx-auto bg-teal-primary/10 rounded-full flex items-center justify-center mb-4">
+                  <Eye className="h-8 w-8 text-teal-primary" />
                 </div>
                 <CardTitle className="text-2xl text-text-primary flex items-center justify-center gap-2">
                   <span>🔍</span>
-                  Coming Soon: Use AI to Analyze Suspicious Content
+                  Use AI to Analyze Suspicious Content
                 </CardTitle>
                 <CardDescription className="text-lg text-text-secondary">
-                  Our AI assistant will soon help you check images, screenshots, and messages for hidden signs 
+                  Our AI assistant is designed to help you check images, screenshots, and messages for hidden signs 
                   of human trafficking — such as coercive phrases, unsafe environments, or manipulative patterns.
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
-                <div className="border-2 border-dashed border-muted-foreground/30 rounded-lg p-8 text-center bg-muted/20">
-                  <Upload className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                  <p className="text-muted-foreground font-medium mb-2">Upload Screenshot or Photo</p>
-                  <p className="text-sm text-muted-foreground/70 mb-4">
-                    Drag and drop files here, or click to browse
-                  </p>
-                  <Button variant="outline" disabled className="opacity-50">
-                    <Eye className="h-4 w-4 mr-2" />
-                    AI Scan (Coming Soon)
+                {/* File Upload Area */}
+                <div className="relative">
+                  <input
+                    type="file"
+                    id="file-upload"
+                    accept="image/*"
+                    onChange={handleFileUpload}
+                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                  />
+                  <div className="border-2 border-dashed border-teal-primary/30 rounded-lg p-8 text-center bg-teal-primary/5 hover:bg-teal-primary/10 transition-colors cursor-pointer">
+                    <Upload className="h-12 w-12 text-teal-primary mx-auto mb-4" />
+                    <p className="text-teal-primary font-medium mb-2">Upload Screenshot or Photo</p>
+                    <p className="text-sm text-text-secondary mb-4">
+                      Drag and drop a file here, or click to browse
+                    </p>
+                    {uploadedFile && (
+                      <div className="flex items-center justify-center gap-2 text-sm text-teal-primary">
+                        <FileImage className="h-4 w-4" />
+                        <span>{uploadedFile.name}</span>
+                        <CheckCircle className="h-4 w-4" />
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* AI Scan Button */}
+                <div className="text-center">
+                  <Button 
+                    onClick={handleAIScan}
+                    size="lg" 
+                    className="bg-teal-primary hover:bg-teal-primary/90 text-white text-lg px-12 py-6"
+                  >
+                    <Eye className="h-5 w-5 mr-2" />
+                    🔎 AI Scan
                   </Button>
                 </div>
+
+                {/* Simulated AI Output */}
+                {showSimulation && (
+                  <div className="bg-neutral-light/50 backdrop-blur-sm p-6 rounded-lg border border-teal-primary/20 animate-in fade-in duration-500">
+                    <div className="flex items-start gap-3 mb-4">
+                      <div className="w-8 h-8 bg-teal-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
+                        <Eye className="h-4 w-4 text-teal-primary" />
+                      </div>
+                      <div>
+                        <h4 className="font-semibold text-teal-primary mb-2">AI Analysis Complete</h4>
+                        <div className="space-y-2 text-sm text-text-secondary blur-sm">
+                          <p>• Found 3 potential warning signs in this image</p>
+                          <p>• Detected phrases commonly used in exploitative scenarios</p>
+                          <p>• Identified environmental factors suggesting control</p>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="text-xs text-muted-foreground italic text-center">
+                      This is a preview of future AI capabilities
+                    </div>
+                  </div>
+                )}
+
+                {/* Disclaimer */}
                 <div className="bg-muted/10 p-4 rounded-lg border border-muted-foreground/10">
                   <p className="text-sm text-text-secondary italic">
-                    This tool will let you scan messages, job ads, or room photos for signs of trafficking using AI. 
-                    No data will be stored.
+                    Right now, this is for learning only. AI insights are simulated and no data is stored.
                   </p>
                 </div>
               </CardContent>
