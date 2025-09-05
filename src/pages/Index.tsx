@@ -11,10 +11,11 @@ const Index = () => {
 
   const text = {
     en: {
-      title: "AI Aware",
+      title: "SafeLens",
+      tagline: "AI Literacy for Safety",
       subtitle: "Spot red flags. Take action.",
       description: "Use AI to recognize signs of human trafficking — quickly, privately, and compassionately.",
-      startLearning: "Start Learning",
+      startLearning: "Start SafeLens Course",
       reportConcern: "Report a Concern",
       language: "Language: English | Español",
       whatAIHelps: "What AI Can Help You Recognize",
@@ -54,15 +55,16 @@ const Index = () => {
           desc: "Receive risk score with clear explanations"
         }
       ],
-      aboutText: "This tool was built by volunteers dedicated to ethical AI and human rights. It does not store your data and is for educational purposes only.",
+      aboutText: "SafeLens is an interactive learning tool that uses AI to teach communities how to detect trafficking risks and use AI safely. Built for NGOs, volunteers, and everyday people, it combines scenarios, quizzes, and badges to build AI literacy for safety.",
       accessibilityNote: "Screen reader–friendly | Anonymous mode enabled",
       emergencyDisclaimer: "If you are in immediate danger, call 911 or your local emergency services."
     },
     es: {
-      title: "AI Aware",
+      title: "SafeLens",
+      tagline: "Alfabetización en IA para la Seguridad",
       subtitle: "Detecta señales. Toma acción.",
       description: "Usa IA para reconocer señales de trata de personas — rápido, privado y compasivo.",
-      startLearning: "Comenzar a Aprender",
+      startLearning: "Comenzar Curso SafeLens",
       reportConcern: "Reportar una Preocupación",
       language: "Idioma: English | Español",
       whatAIHelps: "Lo Que la IA Puede Ayudarte a Reconocer",
@@ -102,7 +104,7 @@ const Index = () => {
           desc: "Recibe puntuación de riesgo con explicaciones claras"
         }
       ],
-      aboutText: "Esta herramienta fue construida por voluntarios dedicados a la IA ética y los derechos humanos. No almacena tus datos y es solo para fines educativos.",
+      aboutText: "SafeLens es una herramienta de aprendizaje interactiva que usa IA para enseñar a las comunidades cómo detectar riesgos de trata y usar IA de manera segura. Construida para ONGs, voluntarios y personas comunes, combina escenarios, cuestionarios y insignias para desarrollar alfabetización en IA para la seguridad.",
       accessibilityNote: "Compatible con lector de pantalla | Modo anónimo habilitado",
       emergencyDisclaimer: "Si estás en peligro inmediato, llama al 911 o a tus servicios de emergencia locales."
     }
@@ -133,7 +135,10 @@ const Index = () => {
           <h1 className="text-6xl md:text-8xl font-bold text-primary-foreground mb-6 tracking-tight drop-shadow-lg">
             {currentText.title}
           </h1>
-          <h2 className="text-2xl md:text-3xl font-semibold text-primary-foreground/95 mb-4 drop-shadow-md">
+          <p className="text-2xl md:text-3xl font-medium text-primary-foreground/90 mb-2 drop-shadow-md">
+            {currentText.tagline}
+          </p>
+          <h2 className="text-xl md:text-2xl font-semibold text-primary-foreground/85 mb-4 drop-shadow-md">
             {currentText.subtitle}
           </h2>
           <p className="text-xl md:text-2xl text-primary-foreground/85 mb-12 max-w-3xl mx-auto leading-relaxed drop-shadow-md">
@@ -258,9 +263,9 @@ const Index = () => {
         <div className="max-w-4xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mb-12">
             <div>
-              <h3 className="text-2xl font-bold mb-4">AI Aware</h3>
+              <h3 className="text-2xl font-bold mb-4">SafeLens</h3>
               <p className="text-primary-foreground/80 mb-6">
-                Empowering communities with AI-powered awareness tools
+                AI Literacy for Safety — Empowering communities with AI-powered awareness tools
               </p>
               <div className="flex items-center gap-2 text-sm text-primary-foreground/70">
                 <Shield className="w-4 h-4" />
@@ -297,7 +302,7 @@ const Index = () => {
           
           <div className="text-center pt-8 border-t border-primary-foreground/20">
             <p className="text-primary-foreground/60 text-sm">
-              © 2025 AI Aware. Built with care for human dignity.
+              © 2025 SafeLens. Built with care for human dignity.
             </p>
           </div>
         </div>
