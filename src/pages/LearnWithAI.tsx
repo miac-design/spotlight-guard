@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { Eye, Shield, MessageSquare, ArrowLeft, AlertTriangle, CheckCircle, XCircle, HelpCircle, Brain, MessageCircle, FileText, Home, Play, Lock, Unlock, Award, Download, Share2 } from 'lucide-react';
+import { Eye, Shield, MessageSquare, ArrowLeft, AlertTriangle, CheckCircle, XCircle, HelpCircle, Brain, MessageCircle, FileText, Home, Play, Lock, Unlock, Award, Download, Share2, Camera, Lightbulb } from 'lucide-react';
 import jobAdImage from "@/assets/job-ad-scenario.jpg";
 import roomImage from "@/assets/room-scenario.jpg";
 import chatImage from "@/assets/chat-scenario.jpg";
@@ -25,7 +25,7 @@ const LearnWithAI = () => {
   const [completedLevels, setCompletedLevels] = useState<Set<string>>(new Set());
   const [currentModule, setCurrentModule] = useState<string | null>(null);
   const [currentLevel, setCurrentLevel] = useState<string | null>(null);
-  const [courseQuizAnswers, setCourseQuizAnswers] = useState<{[key: string]: string}>({});
+  const [courseQuizAnswers, setCourseQuizAnswers] = useState<{[key: string]: string | boolean}>({});
   const [earnedBadges, setEarnedBadges] = useState<Set<string>>(new Set());
 
   // Learning Module Cards
@@ -248,12 +248,18 @@ const LearnWithAI = () => {
             id: 'level-1-3',
             title: 'Room/Photo Check',
             type: 'instruction',
-            content: 'Upload a room photo (demo). Ask: "Do you see signs this place might be unsafe?"',
-            mockResponse: '⚠️ Signs: padlock inside, blackout curtains, no belongings.',
+            content: 'AI tools can analyze photos of rooms to detect unsafe living conditions. Let\'s practice with a demo photo.',
+            demoImage: '/src/assets/room-scenario.jpg',
+            mockResponse: '⚠️ Detected Risks: Padlock inside the room, heavy blackout curtains, absence of personal belongings. These may indicate restricted freedom or unsafe living conditions.',
             activity: {
               type: 'spot-signs',
-              signs: ['Multiple mattresses', 'Blocked windows', 'Interior locks', 'No personal items']
-            }
+              signs: [
+                { id: 'padlock', text: 'Padlock inside room', x: 65, y: 45 },
+                { id: 'curtains', text: 'Heavy blackout curtains', x: 20, y: 30 },
+                { id: 'no-belongings', text: 'No personal belongings', x: 40, y: 70 }
+              ]
+            },
+            reflection: 'AI can highlight red flags in photos, but it may miss context. Always combine AI results with your own judgment and report concerns safely.'
           }
         ]
       },
@@ -1021,6 +1027,167 @@ const LearnWithAI = () => {
                             </div>
                           </CardContent>
                         </Card>
+                      )}
+
+                      {/* Spot Signs Activity */}
+                      {('activity' in level) && level.activity?.type === 'spot-signs' && (
+                        <>
+                          {/* Demo Image Card */}
+                          {('demoImage' in level) && level.demoImage && (
+                            <Card>
+                              <CardHeader>
+                                <CardTitle className="flex items-center gap-2">
+                                  <Camera className="h-5 w-5 text-teal-primary" />
+                                  Demo Photo Analysis
+                                </CardTitle>
+                              </CardHeader>
+                              <CardContent>
+                                <p className="mb-4 text-text-secondary">
+                                  "Imagine you uploaded this photo to an AI tool and asked: 'Do you see signs this place might be unsafe?'"
+                                </p>
+                                <div className="relative bg-gray-100 rounded-lg overflow-hidden">
+                                  <img 
+                                    src={level.demoImage} 
+                                    alt="Demo room for safety analysis"
+                                    className="w-full h-64 object-cover"
+                                  />
+                                  <div className="absolute inset-0 bg-black/20"></div>
+                                  <div className="absolute top-2 left-2 bg-white/90 backdrop-blur px-2 py-1 rounded text-xs font-medium">
+                                    Demo Photo - Not Real
+                                  </div>
+                                </div>
+                              </CardContent>
+                            </Card>
+                          )}
+
+                          {/* Mock AI Response Card */}
+                          <Card>
+                            <CardHeader>
+                              <CardTitle className="flex items-center gap-2">
+                                <Brain className="h-5 w-5 text-teal-primary" />
+                                AI Analysis Response
+                              </CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                              <div className="bg-yellow-50 p-4 rounded-lg border-l-4 border-yellow-400 mb-4">
+                                <div className="flex items-start gap-2">
+                                  <AlertTriangle className="h-5 w-5 text-yellow-600 flex-shrink-0 mt-0.5" />
+                                  <div>
+                                    <h4 className="font-semibold text-yellow-800 mb-2">AI Tool Response:</h4>
+                                    <p className="text-yellow-700">{level.mockResponse}</p>
+                                  </div>
+                                </div>
+                              </div>
+                            </CardContent>
+                          </Card>
+
+                          {/* Interactive Spot-the-Signs */}
+                          <Card>
+                            <CardHeader>
+                              <CardTitle>Interactive: Spot the Red Flags</CardTitle>
+                              <CardDescription>
+                                Tap the areas in the photo where you see the same red flags AI identified
+                              </CardDescription>
+                            </CardHeader>
+                            <CardContent>
+                              <div className="relative bg-gray-100 rounded-lg overflow-hidden mb-4">
+                                <img 
+                                  src={('demoImage' in level) ? level.demoImage : '/src/assets/room-scenario.jpg'} 
+                                  alt="Interactive room analysis"
+                                  className="w-full h-64 object-cover"
+                                />
+                                {level.activity.signs.map((sign) => {
+                                  const isSpotted = courseQuizAnswers[`${level.id}-${sign.id}`];
+                                  return (
+                                    <button
+                                      key={sign.id}
+                                      className={`absolute w-8 h-8 rounded-full border-2 transition-all ${
+                                        isSpotted 
+                                          ? 'bg-green-500 border-green-600 animate-pulse' 
+                                          : 'bg-red-500/70 border-red-600 hover:bg-red-500 hover:scale-110'
+                                      }`}
+                                      style={{ 
+                                        left: `${sign.x}%`, 
+                                        top: `${sign.y}%`,
+                                        transform: 'translate(-50%, -50%)'
+                                      }}
+                                      onClick={() => {
+                                        setCourseQuizAnswers(prev => ({
+                                          ...prev,
+                                          [`${level.id}-${sign.id}`]: true
+                                        }));
+                                      }}
+                                      disabled={!!isSpotted}
+                                    >
+                                      {isSpotted ? (
+                                        <CheckCircle className="h-4 w-4 text-white" />
+                                      ) : (
+                                        <span className="text-white text-xl">!</span>
+                                      )}
+                                    </button>
+                                  );
+                                })}
+                              </div>
+                              
+                              <div className="space-y-2 mb-4">
+                                <h4 className="font-semibold text-text-primary">Red Flags to Find:</h4>
+                                <div className="grid grid-cols-1 gap-2">
+                                  {level.activity.signs.map((sign) => {
+                                    const isSpotted = !!courseQuizAnswers[`${level.id}-${sign.id}`];
+                                    return (
+                                      <div key={sign.id} className={`flex items-center gap-2 p-2 rounded ${
+                                        isSpotted ? 'bg-green-50 text-green-800' : 'bg-gray-50 text-text-secondary'
+                                      }`}>
+                                        {isSpotted ? (
+                                          <CheckCircle className="h-4 w-4 text-green-600" />
+                                        ) : (
+                                          <div className="w-4 h-4 rounded-full border-2 border-gray-300"></div>
+                                        )}
+                                        <span className="text-sm">{sign.text}</span>
+                                      </div>
+                                    );
+                                  })}
+                                </div>
+                              </div>
+
+                              {level.activity.signs.every(sign => !!courseQuizAnswers[`${level.id}-${sign.id}`]) && (
+                                <div className="bg-green-50 p-4 rounded-lg border border-green-200">
+                                  <div className="flex items-center gap-2 mb-2">
+                                    <CheckCircle className="h-5 w-5 text-green-600" />
+                                    <span className="font-semibold text-green-800">Great work!</span>
+                                  </div>
+                                  <p className="text-green-700 text-sm">
+                                    ✅ Correct! These are the same red flags AI identified.
+                                  </p>
+                                </div>
+                              )}
+                            </CardContent>
+                          </Card>
+
+                          {/* Reflection Card */}
+                          {('reflection' in level) && level.reflection && (
+                            <Card>
+                              <CardHeader>
+                                <CardTitle className="flex items-center gap-2">
+                                  <Lightbulb className="h-5 w-5 text-teal-primary" />
+                                  Key Takeaway
+                                </CardTitle>
+                              </CardHeader>
+                              <CardContent>
+                                <div className="bg-teal-50 p-4 rounded-lg border-l-4 border-teal-primary">
+                                  <p className="text-teal-800">{level.reflection}</p>
+                                </div>
+                                <Button 
+                                  className="w-full mt-4"
+                                  onClick={() => completeLevel(level.id)}
+                                  disabled={!level.activity.signs.every(sign => !!courseQuizAnswers[`${level.id}-${sign.id}`])}
+                                >
+                                  Complete Level
+                                </Button>
+                              </CardContent>
+                            </Card>
+                          )}
+                        </>
                       )}
 
                       {/* Activity Components */}
