@@ -33,7 +33,7 @@ const LearnWithAI = () => {
     {
       id: 'job-ad-scenario',
       title: 'Spot the Signs in a Job Ad',
-      description: 'Examine a job ad and see what dangers AI can highlight.',
+      description: 'Learn how AI can highlight risks in job ads and spot false promises.',
       icon: FileText,
       type: 'scenario',
       scenarioData: {
@@ -54,7 +54,7 @@ const LearnWithAI = () => {
     {
       id: 'room-scenario',
       title: 'Is This Room Safe?',
-      description: 'Look closely at a room and check for unsafe living conditions.',
+      description: 'Use AI to detect unsafe living conditions in photos.',
       icon: Home,
       type: 'scenario',
       scenarioData: {
@@ -75,7 +75,7 @@ const LearnWithAI = () => {
     {
       id: 'chat-scenario',
       title: 'Hidden Risks in a Chat',
-      description: 'Review a chat conversation and learn how AI detects manipulation.',
+      description: 'See how AI spots manipulation and coercive language in chats.',
       icon: MessageSquare,
       type: 'scenario',
       scenarioData: {
@@ -96,21 +96,21 @@ const LearnWithAI = () => {
     {
       id: 'red-flags-game',
       title: 'Spot the Red Flags',
-      description: 'Tap dangerous phrases in a fake job posting to learn why they\'re risky.',
+      description: 'Practice safe & ethical use by identifying dangerous phrases.',
       icon: AlertTriangle,
       type: 'red-flags'
     },
     {
       id: 'trust-gut-quiz',
       title: 'Trust Your Gut Quiz',
-      description: 'Decide if a message is safe or suspicious.',
+      description: 'Test your intuition and learn why AI results should be double-checked.',
       icon: HelpCircle,
       type: 'quiz'
     },
     {
       id: 'ai-helper',
       title: 'Ask the AI Helper',
-      description: 'See how AI can act as a safety assistant with simple questions.',
+      description: 'See how AI can act as a safety assistant and guide safe next steps.',
       icon: Brain,
       type: 'ai-helper'
     }
