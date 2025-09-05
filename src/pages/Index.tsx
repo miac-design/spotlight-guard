@@ -13,7 +13,6 @@ const Index = () => {
     en: {
       title: "SafeLens",
       tagline: "AI Literacy for Safety",
-      subtitle: "Spot red flags. Take action.",
       description: "Use AI to recognize signs of human trafficking — quickly, privately, and compassionately.",
       startLearning: "Start SafeLens Course",
       reportConcern: "Report a Concern",
@@ -62,7 +61,6 @@ const Index = () => {
     es: {
       title: "SafeLens",
       tagline: "Alfabetización en IA para la Seguridad",
-      subtitle: "Detecta señales. Toma acción.",
       description: "Usa IA para reconocer señales de trata de personas — rápido, privado y compasivo.",
       startLearning: "Comenzar Curso SafeLens",
       reportConcern: "Reportar una Preocupación",
@@ -135,12 +133,9 @@ const Index = () => {
           <h1 className="text-6xl md:text-8xl font-bold text-primary-foreground mb-6 tracking-tight drop-shadow-lg">
             {currentText.title}
           </h1>
-          <p className="text-2xl md:text-3xl font-medium text-primary-foreground/90 mb-2 drop-shadow-md">
+          <p className="text-2xl md:text-3xl font-medium text-primary-foreground/90 mb-8 drop-shadow-md">
             {currentText.tagline}
           </p>
-          <h2 className="text-xl md:text-2xl font-semibold text-primary-foreground/85 mb-4 drop-shadow-md">
-            {currentText.subtitle}
-          </h2>
           <p className="text-xl md:text-2xl text-primary-foreground/85 mb-12 max-w-3xl mx-auto leading-relaxed drop-shadow-md">
             {currentText.description}
           </p>
