@@ -2,12 +2,15 @@ import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { Eye, Shield, MessageSquare, ArrowLeft, AlertTriangle, CheckCircle, XCircle, HelpCircle, Brain, MessageCircle, FileText, Home, Play } from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Badge } from "@/components/ui/badge";
+import { Eye, Shield, MessageSquare, ArrowLeft, AlertTriangle, CheckCircle, XCircle, HelpCircle, Brain, MessageCircle, FileText, Home, Play, Lock, Unlock, Award, Download, Share2 } from 'lucide-react';
 import jobAdImage from "@/assets/job-ad-scenario.jpg";
 import roomImage from "@/assets/room-scenario.jpg";
 import chatImage from "@/assets/chat-scenario.jpg";
 
 const LearnWithAI = () => {
+  // Scenarios Tab State
   const [activeReveal, setActiveReveal] = useState<string | null>(null);
   const [tappedFlags, setTappedFlags] = useState<Set<number>>(new Set());
   const [quizIndex, setQuizIndex] = useState(0);
@@ -16,6 +19,14 @@ const LearnWithAI = () => {
   const [activeHelper, setActiveHelper] = useState<string | null>(null);
   const [expandedCard, setExpandedCard] = useState<string | null>(null);
   const [completedModules, setCompletedModules] = useState<Set<string>>(new Set());
+  
+  // AI Literacy Course State
+  const [activeTab, setActiveTab] = useState("scenarios");
+  const [completedLevels, setCompletedLevels] = useState<Set<string>>(new Set());
+  const [currentModule, setCurrentModule] = useState<string | null>(null);
+  const [currentLevel, setCurrentLevel] = useState<string | null>(null);
+  const [courseQuizAnswers, setCourseQuizAnswers] = useState<{[key: string]: string}>({});
+  const [earnedBadges, setEarnedBadges] = useState<Set<string>>(new Set());
 
   // Learning Module Cards
   const learningModules = [
@@ -193,6 +204,142 @@ const LearnWithAI = () => {
 
   const progressPercentage = (completedModules.size / learningModules.length) * 100;
 
+  // AI Literacy Course Data
+  const aiLiteracyCourse = {
+    modules: [
+      {
+        id: 'module-1',
+        title: 'Using AI to Detect Trafficking Signs',
+        description: 'Learn to use AI tools to identify red flags in job ads, chats, and photos',
+        badge: 'AI Detective Badge 🕵️‍♀️',
+        levels: [
+          {
+            id: 'level-1-1',
+            title: 'Job Ads',
+            type: 'instruction',
+            content: 'Copy a suspicious job ad into an AI tool. Ask: "Does this job look risky or exploitative?"',
+            mockResponse: '⚠️ Red Flags Found: vague pay, urgent start, no contract.',
+            quiz: {
+              question: 'Which is the best prompt?',
+              options: [
+                { text: 'Is this job good?', correct: false },
+                { text: 'Does this ad have trafficking red flags?', correct: true },
+                { text: 'Should I apply?', correct: false }
+              ]
+            }
+          },
+          {
+            id: 'level-1-2',
+            title: 'Chat Messages',
+            type: 'instruction',
+            content: 'Paste a chat into AI. Ask: "Do you see manipulative or coercive language?"',
+            mockResponse: '⚠️ Grooming signs: isolation, false promises, threats.',
+            activity: {
+              type: 'categorize',
+              phrases: [
+                { text: 'Meet for coffee?', category: 'safe' },
+                { text: 'Don\'t tell anyone', category: 'risky' },
+                { text: 'You owe me money', category: 'risky' },
+                { text: 'When are you free?', category: 'safe' }
+              ]
+            }
+          },
+          {
+            id: 'level-1-3',
+            title: 'Room/Photo Check',
+            type: 'instruction',
+            content: 'Upload a room photo (demo). Ask: "Do you see signs this place might be unsafe?"',
+            mockResponse: '⚠️ Signs: padlock inside, blackout curtains, no belongings.',
+            activity: {
+              type: 'spot-signs',
+              signs: ['Multiple mattresses', 'Blocked windows', 'Interior locks', 'No personal items']
+            }
+          }
+        ]
+      },
+      {
+        id: 'module-2',
+        title: 'Safe & Ethical Use of AI',
+        description: 'Learn responsible AI practices for safety and privacy',
+        badge: 'AI Guardian Badge 🛡️',
+        levels: [
+          {
+            id: 'level-2-1',
+            title: 'Privacy First',
+            type: 'instruction',
+            content: 'Never upload personal IDs, faces, or sensitive info.',
+            quiz: {
+              question: 'Which is safe to upload?',
+              options: [
+                { text: 'Passport photo', correct: false },
+                { text: 'Screenshot of job ad', correct: true },
+                { text: 'Friend\'s selfie', correct: false }
+              ]
+            }
+          },
+          {
+            id: 'level-2-2',
+            title: 'Double-Check Results',
+            type: 'scenario',
+            content: 'AI isn\'t always right. Cross-check with a hotline or NGO.',
+            scenario: 'AI says a chat is safe, but it feels wrong. What should you do?',
+            answer: '✅ Trust your gut, report or verify with experts.'
+          },
+          {
+            id: 'level-2-3',
+            title: 'Taking Action',
+            type: 'instruction',
+            content: 'If AI flags high risk: don\'t stop here. Call a hotline or report safely.',
+            quiz: {
+              question: 'What would you do next?',
+              options: [
+                { text: 'Ignore', correct: false },
+                { text: 'Call hotline', correct: true },
+                { text: 'Share on social media', correct: false }
+              ]
+            }
+          }
+        ]
+      }
+    ]
+  };
+
+  // Course Helper Functions
+  const isLevelUnlocked = (moduleId: string, levelId: string) => {
+    const module = aiLiteracyCourse.modules.find(m => m.id === moduleId);
+    if (!module) return false;
+    
+    const levelIndex = module.levels.findIndex(l => l.id === levelId);
+    if (levelIndex === 0) return true; // First level is always unlocked
+    
+    const previousLevel = module.levels[levelIndex - 1];
+    return completedLevels.has(previousLevel.id);
+  };
+
+  const completeLevel = (levelId: string) => {
+    setCompletedLevels(prev => new Set(prev).add(levelId));
+    
+    // Check if module is complete and award badge
+    const module = aiLiteracyCourse.modules.find(m => 
+      m.levels.some(l => l.id === levelId)
+    );
+    
+    if (module) {
+      const allLevelsComplete = module.levels.every(l => 
+        completedLevels.has(l.id) || l.id === levelId
+      );
+      
+      if (allLevelsComplete) {
+        setEarnedBadges(prev => new Set(prev).add(module.id));
+      }
+    }
+  };
+
+  const getCourseProgress = () => {
+    const totalLevels = aiLiteracyCourse.modules.reduce((acc, m) => acc + m.levels.length, 0);
+    return (completedLevels.size / totalLevels) * 100;
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-secondary/20">
       {/* Header */}
@@ -219,56 +366,64 @@ const LearnWithAI = () => {
       </header>
 
       <main className="container mx-auto px-4 py-8 space-y-8">
-        {/* Progress Tracking */}
-        <section className="space-y-4">
-          <div className="text-center">
-            <h2 className="text-2xl font-bold text-text-primary mb-2">
-              You've explored {completedModules.size} of {learningModules.length} scenarios
-            </h2>
-            <Progress value={progressPercentage} className="w-full max-w-md mx-auto" />
-          </div>
-        </section>
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+          <TabsList className="grid w-full grid-cols-2 max-w-md mx-auto">
+            <TabsTrigger value="scenarios">Scenarios</TabsTrigger>
+            <TabsTrigger value="course">AI Literacy Mini-Course</TabsTrigger>
+          </TabsList>
 
-        {/* Card Grid */}
-        {!expandedCard ? (
-          <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {learningModules.map((module) => {
-              const IconComponent = module.icon;
-              const isCompleted = completedModules.has(module.id);
-              
-              return (
-                <Card 
-                  key={module.id}
-                  className="group cursor-pointer transition-all duration-300 hover:shadow-lg hover:shadow-teal-primary/20 hover:scale-105"
-                  onClick={() => expandCard(module.id)}
-                >
-                  <CardHeader className="text-center pb-4">
-                    <div className="w-16 h-16 mx-auto bg-teal-primary/10 rounded-full flex items-center justify-center mb-4 group-hover:bg-teal-primary/20 transition-colors">
-                      <IconComponent className="h-8 w-8 text-teal-primary" />
-                    </div>
-                    <CardTitle className="text-xl font-bold text-text-primary flex items-center justify-center gap-2">
-                      {module.title}
-                      {isCompleted && (
-                        <CheckCircle className="h-5 w-5 text-green-600" />
-                      )}
-                    </CardTitle>
-                    <CardDescription className="text-text-secondary">
-                      {module.description}
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="text-center">
-                    <Button 
-                      className="bg-gradient-to-r from-teal-primary to-teal-dark text-white hover:from-teal-dark hover:to-teal-primary w-full"
+          {/* Tab 1: Scenarios */}
+          <TabsContent value="scenarios" className="space-y-8">
+            {/* Progress Tracking */}
+            <section className="space-y-4">
+              <div className="text-center">
+                <h2 className="text-2xl font-bold text-text-primary mb-2">
+                  You've explored {completedModules.size} of {learningModules.length} scenarios
+                </h2>
+                <Progress value={progressPercentage} className="w-full max-w-md mx-auto" />
+              </div>
+            </section>
+
+            {/* Card Grid */}
+            {!expandedCard ? (
+              <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {learningModules.map((module) => {
+                  const IconComponent = module.icon;
+                  const isCompleted = completedModules.has(module.id);
+                  
+                  return (
+                    <Card 
+                      key={module.id}
+                      className="group cursor-pointer transition-all duration-300 hover:shadow-lg hover:shadow-teal-primary/20 hover:scale-105"
+                      onClick={() => expandCard(module.id)}
                     >
-                      <Play className="h-4 w-4 mr-2" />
-                      Start
-                    </Button>
-                  </CardContent>
-                </Card>
-              );
-            })}
-          </section>
-        ) : (
+                      <CardHeader className="text-center pb-4">
+                        <div className="w-16 h-16 mx-auto bg-teal-primary/10 rounded-full flex items-center justify-center mb-4 group-hover:bg-teal-primary/20 transition-colors">
+                          <IconComponent className="h-8 w-8 text-teal-primary" />
+                        </div>
+                        <CardTitle className="text-xl font-bold text-text-primary flex items-center justify-center gap-2">
+                          {module.title}
+                          {isCompleted && (
+                            <CheckCircle className="h-5 w-5 text-green-600" />
+                          )}
+                        </CardTitle>
+                        <CardDescription className="text-text-secondary">
+                          {module.description}
+                        </CardDescription>
+                      </CardHeader>
+                      <CardContent className="text-center">
+                        <Button 
+                          className="bg-gradient-to-r from-teal-primary to-teal-dark text-white hover:from-teal-dark hover:to-teal-primary w-full"
+                        >
+                          <Play className="h-4 w-4 mr-2" />
+                          Start
+                        </Button>
+                      </CardContent>
+                    </Card>
+                  );
+                })}
+              </section>
+            ) : (
           /* Expanded Card Content */
           <section className="space-y-6">
             <div className="flex items-center gap-4 mb-6">
@@ -644,9 +799,303 @@ const LearnWithAI = () => {
               </Card>
             </section>
           )}
-        </main>
-      </div>
-    );
-  };
+          </TabsContent>
 
-  export default LearnWithAI;
+          {/* Tab 2: AI Literacy Mini-Course */}
+          <TabsContent value="course" className="space-y-8">
+            {/* Course Progress */}
+            <section className="space-y-4">
+              <div className="text-center">
+                <h2 className="text-2xl font-bold text-text-primary mb-2">
+                  AI Literacy: Learn to Use AI for Safety
+                </h2>
+                <p className="text-text-secondary mb-4">Complete levels in order to unlock progression</p>
+                <Progress value={getCourseProgress()} className="w-full max-w-md mx-auto" />
+                <p className="text-sm text-text-secondary mt-2">
+                  Progress: {completedLevels.size} of {aiLiteracyCourse.modules.reduce((acc, m) => acc + m.levels.length, 0)} levels complete
+                </p>
+              </div>
+            </section>
+
+            {/* Course Modules */}
+            {!currentModule ? (
+              <section className="space-y-8">
+                {aiLiteracyCourse.modules.map((module) => {
+                  const moduleCompleted = earnedBadges.has(module.id);
+                  const moduleProgress = (module.levels.filter(l => completedLevels.has(l.id)).length / module.levels.length) * 100;
+                  
+                  return (
+                    <Card key={module.id} className="overflow-hidden">
+                      <CardHeader className="bg-gradient-to-r from-teal-primary/10 to-teal-dark/10">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <CardTitle className="text-xl font-bold text-text-primary flex items-center gap-2">
+                              {module.title}
+                              {moduleCompleted && <Award className="h-5 w-5 text-yellow-500" />}
+                            </CardTitle>
+                            <CardDescription className="text-text-secondary">
+                              {module.description}
+                            </CardDescription>
+                          </div>
+                          {moduleCompleted && (
+                            <Badge variant="secondary" className="bg-yellow-100 text-yellow-800">
+                              {module.badge}
+                            </Badge>
+                          )}
+                        </div>
+                        <Progress value={moduleProgress} className="w-full mt-4" />
+                      </CardHeader>
+                      
+                      <CardContent className="p-6">
+                        <div className="grid gap-4">
+                          {module.levels.map((level, index) => {
+                            const isUnlocked = isLevelUnlocked(module.id, level.id);
+                            const isCompleted = completedLevels.has(level.id);
+                            
+                            return (
+                              <div key={level.id} className="flex items-center gap-4 p-4 rounded-lg border">
+                                <div className="flex-shrink-0">
+                                  {isCompleted ? (
+                                    <CheckCircle className="h-6 w-6 text-green-600" />
+                                  ) : isUnlocked ? (
+                                    <Unlock className="h-6 w-6 text-teal-primary" />
+                                  ) : (
+                                    <Lock className="h-6 w-6 text-gray-400" />
+                                  )}
+                                </div>
+                                
+                                <div className="flex-grow">
+                                  <h4 className={`font-semibold ${isUnlocked ? 'text-text-primary' : 'text-gray-400'}`}>
+                                    Level {index + 1}: {level.title}
+                                  </h4>
+                                  <p className={`text-sm ${isUnlocked ? 'text-text-secondary' : 'text-gray-400'}`}>
+                                    {level.content}
+                                  </p>
+                                </div>
+                                
+                                <Button
+                                  disabled={!isUnlocked}
+                                  onClick={() => {
+                                    setCurrentModule(module.id);
+                                    setCurrentLevel(level.id);
+                                  }}
+                                  variant={isCompleted ? "outline" : "default"}
+                                  size="sm"
+                                >
+                                  {isCompleted ? "Review" : "Start"}
+                                </Button>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  );
+                })}
+
+                {/* Final Celebration Card */}
+                {earnedBadges.size === aiLiteracyCourse.modules.length && (
+                  <Card className="bg-gradient-to-r from-green-50 to-blue-50 border-green-200">
+                    <CardContent className="text-center p-8">
+                      <Award className="h-16 w-16 text-yellow-500 mx-auto mb-4" />
+                      <h3 className="text-2xl font-bold text-text-primary mb-2">
+                        🎉 You are now AI Aware!
+                      </h3>
+                      <p className="text-text-secondary mb-6">
+                        You know how to detect trafficking signs AND use AI responsibly.
+                      </p>
+                      
+                      <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                        <Button className="flex items-center gap-2">
+                          <Download className="h-4 w-4" />
+                          Download AI Safety Checklist
+                        </Button>
+                        <Button variant="outline" className="flex items-center gap-2">
+                          <Share2 className="h-4 w-4" />
+                          Share Completion
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                )}
+              </section>
+            ) : (
+              /* Level Content */
+              <section className="space-y-6">
+                {(() => {
+                  const module = aiLiteracyCourse.modules.find(m => m.id === currentModule);
+                  const level = module?.levels.find(l => l.id === currentLevel);
+                  if (!module || !level) return null;
+                  
+                  return (
+                    <>
+                      <div className="flex items-center gap-4 mb-6">
+                        <Button 
+                          variant="ghost" 
+                          size="sm"
+                          onClick={() => {
+                            setCurrentModule(null);
+                            setCurrentLevel(null);
+                          }}
+                          className="text-muted-foreground hover:text-foreground"
+                        >
+                          <ArrowLeft className="h-4 w-4 mr-2" />
+                          Back to Course
+                        </Button>
+                        <div>
+                          <h2 className="text-2xl font-bold text-teal-primary">
+                            {level.title}
+                          </h2>
+                          <p className="text-text-secondary">{module.title}</p>
+                        </div>
+                      </div>
+
+                      <Card>
+                        <CardHeader>
+                          <CardTitle className="flex items-center gap-2">
+                            <Brain className="h-5 w-5 text-teal-primary" />
+                            Instructions
+                          </CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                          <p className="text-text-primary mb-4">{level.content}</p>
+                          
+                          {('mockResponse' in level) && level.mockResponse && (
+                            <div className="bg-gray-50 p-4 rounded-lg border-l-4 border-teal-primary">
+                              <h4 className="font-semibold text-teal-primary mb-2">Mock AI Response:</h4>
+                              <p className="text-text-primary">{level.mockResponse}</p>
+                            </div>
+                          )}
+                        </CardContent>
+                      </Card>
+
+                      {/* Quiz Component */}
+                      {('quiz' in level) && level.quiz && (
+                        <Card>
+                          <CardHeader>
+                            <CardTitle>Knowledge Check</CardTitle>
+                          </CardHeader>
+                          <CardContent>
+                            <p className="font-semibold mb-4">{level.quiz.question}</p>
+                            <div className="space-y-2">
+                              {level.quiz.options.map((option, index) => {
+                                const hasAnswered = !!courseQuizAnswers[level.id];
+                                const isSelected = courseQuizAnswers[level.id] === option.text;
+                                const showResult = hasAnswered;
+                                
+                                return (
+                                  <Button
+                                    key={index}
+                                    variant="outline"
+                                    className={`w-full justify-start text-left p-4 h-auto ${
+                                      showResult 
+                                        ? option.correct 
+                                          ? 'border-green-500 bg-green-50' 
+                                          : isSelected 
+                                            ? 'border-red-500 bg-red-50' 
+                                            : ''
+                                        : ''
+                                    }`}
+                                    onClick={() => {
+                                      if (!hasAnswered) {
+                                        setCourseQuizAnswers(prev => ({
+                                          ...prev,
+                                          [level.id]: option.text
+                                        }));
+                                        
+                                        if (option.correct) {
+                                          setTimeout(() => completeLevel(level.id), 1000);
+                                        }
+                                      }
+                                    }}
+                                    disabled={hasAnswered}
+                                  >
+                                    <span className="flex items-center gap-2">
+                                      {showResult && option.correct && <CheckCircle className="h-4 w-4 text-green-600" />}
+                                      {showResult && !option.correct && isSelected && <XCircle className="h-4 w-4 text-red-600" />}
+                                      {option.text}
+                                    </span>
+                                  </Button>
+                                );
+                              })}
+                            </div>
+                          </CardContent>
+                        </Card>
+                      )}
+
+                      {/* Activity Components */}
+                      {('activity' in level) && level.activity?.type === 'categorize' && (
+                        <Card>
+                          <CardHeader>
+                            <CardTitle>Categorize These Phrases</CardTitle>
+                          </CardHeader>
+                          <CardContent>
+                            <p className="mb-4">Drag phrases into "Safe" or "Risky" categories:</p>
+                            <div className="grid md:grid-cols-2 gap-6">
+                              <div className="space-y-2">
+                                <h4 className="font-semibold text-green-600">Safe</h4>
+                                <div className="min-h-[100px] p-4 border-2 border-dashed border-green-200 rounded-lg">
+                                  {('activity' in level) && level.activity && level.activity.phrases
+                                    .filter(p => p.category === 'safe')
+                                    .map((phrase, idx) => (
+                                      <div key={idx} className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm mb-2">
+                                        {phrase.text}
+                                      </div>
+                                    ))}
+                                </div>
+                              </div>
+                              <div className="space-y-2">
+                                <h4 className="font-semibold text-red-600">Risky</h4>
+                                <div className="min-h-[100px] p-4 border-2 border-dashed border-red-200 rounded-lg">
+                                  {('activity' in level) && level.activity && level.activity.phrases
+                                    .filter(p => p.category === 'risky')
+                                    .map((phrase, idx) => (
+                                      <div key={idx} className="bg-red-100 text-red-800 px-3 py-1 rounded-full text-sm mb-2">
+                                        {phrase.text}
+                                      </div>
+                                    ))}
+                                </div>
+                              </div>
+                            </div>
+                            <Button 
+                              className="w-full mt-4"
+                              onClick={() => completeLevel(level.id)}
+                            >
+                              Complete Activity
+                            </Button>
+                          </CardContent>
+                        </Card>
+                      )}
+
+                      {('scenario' in level) && level.scenario && (
+                        <Card>
+                          <CardHeader>
+                            <CardTitle>Scenario</CardTitle>
+                          </CardHeader>
+                          <CardContent>
+                            <p className="font-semibold mb-4">{level.scenario}</p>
+                            <div className="bg-teal-50 p-4 rounded-lg border-l-4 border-teal-primary">
+                              <p className="text-teal-800">{('answer' in level) && level.answer}</p>
+                            </div>
+                            <Button 
+                              className="w-full mt-4"
+                              onClick={() => completeLevel(level.id)}
+                            >
+                              Continue
+                            </Button>
+                          </CardContent>
+                        </Card>
+                      )}
+                    </>
+                  );
+                })()}
+              </section>
+            )}
+          </TabsContent>
+        </Tabs>
+      </main>
+    </div>
+  );
+};
+
+export default LearnWithAI;
