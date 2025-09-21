@@ -43,3 +43,5 @@ Human trafficking is a $150B hidden crisis. Victims go undetected because commun
 - Enables **early detection of trafficking red flags**
 - Scales to schools, NGOs, and civic orgs
 - Aligns with **UN SDGs 8, 10, 16**
+- 
+Final Hackathon Submission
